@@ -1,0 +1,8 @@
+{
+    "vue.features.codeActions.enable": false,
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cSpell.words": [
+        "Fluttertoast"
+    ],
+    "cmake.sourceDirectory": "D:/Work/DE-Project/carrental2_app/linux"
+}

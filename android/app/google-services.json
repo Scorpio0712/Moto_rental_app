@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "194379848713",
+    "project_id": "moto-rental-app",
+    "storage_bucket": "moto-rental-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194379848713:android:27c1285b0f502a41172cd8",
+        "android_client_info": {
+          "package_name": "com.example.carrental_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "194379848713-b9r97uma4sfl8js1illuucj0e5qehr6l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNIijsDZZJOKHNzgSy4yrXsuPzY2j3Do0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "194379848713-b9r97uma4sfl8js1illuucj0e5qehr6l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "194379848713-00v8ijf8th1s3cfliek9219hd2839bm2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carrentalApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
