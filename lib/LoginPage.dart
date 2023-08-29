@@ -48,7 +48,7 @@ class _LoginPage extends State<LoginPage> {
               ),
               Container(
                 width: 325,
-                height: 500,
+                height: 525,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -61,8 +61,31 @@ class _LoginPage extends State<LoginPage> {
                       children: <Widget>[
                         buildTextFieldEmail(),
                         buildTextFieldPassword(),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                child: const Text(
+                                  "Forgot password?",
+                                  style: TextStyle(
+                                    color: Color(0xFF000AFF),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => navigateToResetPasswordPage(context),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                         buildButtonSignIn(),
-                        buildButtonForgotPassword(),
                       ],
                     ),
                     const SizedBox(
@@ -123,7 +146,6 @@ class _LoginPage extends State<LoginPage> {
                                       builder: (context) =>
                                           const SignUpPage()));
                             },
-                            
                           ),
                         ],
                       ),
@@ -150,7 +172,7 @@ class _LoginPage extends State<LoginPage> {
         ),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25), color: Color(0xFF2D3250)),
-        margin: EdgeInsets.only(top: 16),
+        // margin: EdgeInsets.only(top: 16),
         padding: EdgeInsets.all(12),
       ),
       onTap: () {
@@ -204,20 +226,20 @@ class _LoginPage extends State<LoginPage> {
       );
       print("sign in success ${credentials.user?.email}");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text(
-            'sign in success',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Colors.green,
-          duration: const Duration(milliseconds: 1500),
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ));
+        content: const Text(
+          'sign in success',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(milliseconds: 1500),
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ));
       checkAuth(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -269,23 +291,26 @@ class _LoginPage extends State<LoginPage> {
     }
   }
 
-  buildButtonForgotPassword() {
-    return InkWell(
-        child: Container(
-            constraints: BoxConstraints.expand(height: 50),
-            child: Text("Forgot password",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: Colors.white)),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.red[300]),
-            margin: EdgeInsets.only(top: 12),
-            padding: EdgeInsets.all(12)),
-        onTap: () => navigateToResetPasswordPage(context));
-  }
-  
+  // buildButtonForgotPassword() {
+  //   return InkWell(
+  //     child: Container(
+  //       constraints: BoxConstraints.expand(height: 50),
+  //       child: Text(
+  //         "Forgot password",
+  //         textAlign: TextAlign.center,
+  //         style: TextStyle(fontSize: 18, color: Colors.white),
+  //       ),
+  //       decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(16), color: Colors.red[300]),
+  //       margin: EdgeInsets.only(top: 12),
+  //       padding: EdgeInsets.all(12),
+  //     ),
+  //     onTap: () => navigateToResetPasswordPage(context),
+  //   );
+  // }
+
   navigateToResetPasswordPage(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ResetPassPage()));
+        context, MaterialPageRoute(builder: (context) => const ResetPassPage()));
   }
 }

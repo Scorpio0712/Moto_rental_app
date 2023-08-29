@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'LoginPage.dart';
 import 'SignUpPage.dart';
 import 'HomePage.dart';
+import 'ResetPassPage.dart';
 
 // ...
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/log-in': (context) => LoginPage(),
         '/sign-up': (context) => SignUpPage(),
+        '/Reset-password': (context) => ResetPassPage(),
         
       },
       home: LoginPage(),
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/log-in': (context) => LoginPage(),
         '/sign-up': (context) => SignUpPage(),
-        
+        '/Reset-password': (context) => ResetPassPage(),
       },
       home: HomePage(),
       
