@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 
+
 class ResetPassPage extends StatefulWidget {
   const ResetPassPage({super.key});
 
@@ -18,34 +19,73 @@ class _ResetPassPage extends State<ResetPassPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Reset password", style: TextStyle(color: Colors.white)),
-          iconTheme: const IconThemeData(
-            color: Colors.white, //change your color here
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: const Color(0xFF676F9D),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(
+                height: 50,
+              ),
+              Row(
+                children: <Widget>[
+                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(
+                      FontAwesomeIcons.arrowLeft,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+              // SizedBox(width: 20),
+              const Text(
+                'Sign Up',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Container(
+                width: 325,
+                height: 500,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: <Widget>[
+                        buildTextFieldEmail(),
+                        buildButtonResetPass(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
+          // ],
         ),
-        body: Container(
-            color: Colors.green[50],
-            child: Center(
-              child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: const LinearGradient(
-                          colors: <Color>[Color(0xff45b2), Color(0x2bff39)])),
-                  margin: const EdgeInsets.all(32),
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      buildTextFieldEmail(),
-                      buildButtonSignUp(context)
-                    ],
-                  )),
-            )));
+      ),
+    );
   }
 
-  Widget buildButtonSignUp(BuildContext context) {
+  Widget buildButtonResetPass() {
     return InkWell(
         child: Container(
             constraints: const BoxConstraints.expand(height: 50),
@@ -76,21 +116,19 @@ class _ResetPassPage extends State<ResetPassPage> {
     final email = emailController.text.trim();
     _auth.sendPasswordResetEmail(email: email);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "We send the detail to $email successfully.",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Colors.green,
-          duration: const Duration(milliseconds: 1500),
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ));
+      content: Text(
+        "We send the detail to $email successfully.",
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: Colors.green,
+      duration: const Duration(milliseconds: 1500),
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+    ));
   }
-  
 }
-

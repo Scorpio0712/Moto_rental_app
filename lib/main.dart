@@ -25,28 +25,39 @@ class MyApp extends StatelessWidget {
     if(user == null) {
       return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: 'main.dart',
+      home: const LoginPage(),
+      initialRoute: '/',
       routes: {
-        '/log-in': (context) => LoginPage(),
-        '/sign-up': (context) => SignUpPage(),
-        '/Reset-password': (context) => ResetPassPage(),
+        '/sign-up': (context) => const SignUpPage(),
+        '/Reset-password': (context) => const ResetPassPage(),
         
       },
-      home: LoginPage(),
       
     );
     } else {
       return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: 'main.dart',
-      routes: {
-        '/log-in': (context) => LoginPage(),
-        '/sign-up': (context) => SignUpPage(),
-        '/Reset-password': (context) => ResetPassPage(),
-      },
       home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/log-in': (context) => const LoginPage(),
+        '/sign-up': (context) => const SignUpPage(),
+        '/Reset-password': (context) => const ResetPassPage(),
+      },
       
     );
     }
   }
+
+  // Future checkAuth(BuildContext context) async {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     print("Already logged in");
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => HomePage()),
+  //     );
+  //   }
+  // }
+
 }

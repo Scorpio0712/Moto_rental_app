@@ -1,4 +1,3 @@
-import 'package:carrental_app/ResetPassPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'SignUpPage.dart';
 import 'HomePage.dart';
+import 'ResetPassPage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -77,8 +77,8 @@ class _LoginPage extends State<LoginPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => navigateToResetPasswordPage(context),
-                                    ),
+                                        builder: (context) =>
+                                            const ResetPassPage()),
                                   );
                                 },
                               ),
@@ -309,8 +309,8 @@ class _LoginPage extends State<LoginPage> {
   //   );
   // }
 
-  navigateToResetPasswordPage(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ResetPassPage()));
-  }
+  // navigateToResetPassPage(BuildContext context) {
+  //   Navigator.push(
+  //       context, MaterialPageRoute(builder: (context) => ResetPassPage()));
+  // }
 }
