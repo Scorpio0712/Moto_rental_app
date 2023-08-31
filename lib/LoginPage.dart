@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'SignUpPage.dart';
 import 'HomePage.dart';
@@ -98,31 +99,7 @@ class _LoginPage extends State<LoginPage> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: 250,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Color(0xFF2D3250),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                              onPressed: () {},
-                              icon: const Icon(FontAwesomeIcons.google,
-                                  color: Colors.redAccent)),
-                          const Text(
-                            'Continue with Google',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+                    buildButtonGoogle(),
                     const SizedBox(
                       height: 80,
                     ),
@@ -155,6 +132,41 @@ class _LoginPage extends State<LoginPage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildButtonGoogle() {
+    return InkWell(
+      child: Container(
+        alignment: Alignment.center,
+        width: 250,
+        height: 40,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+          color: Color(0xFF2D3250),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpPage()));
+                },
+                icon: const Icon(FontAwesomeIcons.google,
+                    color: Colors.redAccent)),
+            const Text(
+              'Login with Google',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );

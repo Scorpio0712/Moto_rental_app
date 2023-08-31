@@ -1,9 +1,8 @@
+import 'package:carrental_app/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-
 
 class ResetPassPage extends StatefulWidget {
   const ResetPassPage({super.key});
@@ -46,7 +45,7 @@ class _ResetPassPage extends State<ResetPassPage> {
               ),
               // SizedBox(width: 20),
               const Text(
-                'Sign Up',
+                'Reset Password',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.white,
@@ -72,6 +71,7 @@ class _ResetPassPage extends State<ResetPassPage> {
                       children: <Widget>[
                         buildTextFieldEmail(),
                         buildButtonResetPass(),
+                        buildTextDetail(),
                       ],
                     ),
                   ],
@@ -87,29 +87,52 @@ class _ResetPassPage extends State<ResetPassPage> {
 
   Widget buildButtonResetPass() {
     return InkWell(
-        child: Container(
-            constraints: const BoxConstraints.expand(height: 50),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.green[200]),
-            margin: const EdgeInsets.only(top: 16),
-            padding: const EdgeInsets.all(12),
-            child: const Text("Reset password",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: Colors.white))),
-        onTap: () => resetPassword());
+      child: Container(
+        constraints: BoxConstraints.expand(height: 50, width: 200),
+        child: Text("Reset Password",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Colors.white)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25), color: Color(0xFF2D3250)),
+        margin: EdgeInsets.only(top: 14),
+        padding: EdgeInsets.all(12),
+      ),
+      onTap: () {
+        resetPassword();
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+            ));
+      },
+    );
   }
 
   Container buildTextFieldEmail() {
     return Container(
+        width: 300,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-            color: Colors.yellow[50], borderRadius: BorderRadius.circular(16)),
+            color: Colors.white, borderRadius: BorderRadius.circular(16)),
         child: TextField(
             controller: emailController,
-            decoration: const InputDecoration.collapsed(hintText: "Email"),
+            decoration: const InputDecoration(
+              hintText: "Email",
+              border: OutlineInputBorder(),
+            ),
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(fontSize: 18)));
+  }
+
+  Container buildTextDetail() {
+    return Container(
+        width: 200,
+        padding: const EdgeInsets.all(12),
+        child: const Text(
+          "Enter your user account's verified email address and we will send you a password reset link.",
+          style: TextStyle(color: Color(0xffffb17a), fontSize: 16),
+          textAlign: TextAlign.center,
+        ));
   }
 
   resetPassword() {
