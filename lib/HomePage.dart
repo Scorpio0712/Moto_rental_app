@@ -1,5 +1,6 @@
 import 'package:carrental_app/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +9,11 @@ import 'CarInforPage.dart';
 
 class HomePage extends StatefulWidget {
   final user = FirebaseAuth.instance.currentUser;
+  GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: [
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 
   HomePage({
     super.key,
@@ -147,8 +153,11 @@ class _HomePageState extends State<HomePage> {
           ),
           ListTile(
               title: const Text('Log Out'),
-              onTap: () {
+              onTap: () async {
                 FirebaseAuth.instance.signOut();
+
+                await widget.googleSignIn.signOut();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginPage()),

@@ -151,12 +151,7 @@ class _LoginPage extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignUpPage()));
-                },
+                onPressed: () {},
                 icon: const Icon(FontAwesomeIcons.google,
                     color: Colors.redAccent)),
             const Text(
@@ -169,6 +164,9 @@ class _LoginPage extends State<LoginPage> {
           ],
         ),
       ),
+      onTap: () {
+        loginWithGoogle(context);
+      },
     );
   }
 
@@ -301,6 +299,20 @@ class _LoginPage extends State<LoginPage> {
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
+  }
+
+  Future loginWithGoogle(BuildContext context) async {
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: [
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    GoogleSignInAccount? user = await googleSignIn.signIn();
+    GoogleSignInAuthentication? userAuth = await user?.authentication;
+
+    await _auth.signInWithCredential(GoogleAuthProvider.credential(
+        idToken: userAuth?.idToken, accessToken: userAuth?.accessToken));
+    checkAuth(context); // after success route to home.
   }
 
   // buildButtonForgotPassword() {
