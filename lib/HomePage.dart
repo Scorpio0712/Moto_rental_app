@@ -9,11 +9,6 @@ import 'CarInforPage.dart';
 
 class HomePage extends StatefulWidget {
   final user = FirebaseAuth.instance.currentUser;
-  GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: [
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
 
   HomePage({
     super.key,
@@ -35,7 +30,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF2D3250),
-        title: Text('Hello, ${widget.user?.email}'),
+        title: Text(
+          'Hello, ${widget.user?.email}',
+          style: const TextStyle(color: Color(0xffffb17a)),
+        ),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 20),
@@ -44,13 +42,14 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MenuButton(context),
+                    builder: (context) => buildButtonMenu(context),
                   ),
                 );
               },
               child: const Icon(
                 FontAwesomeIcons.bars,
                 size: 20,
+                color: Colors.white,
               ),
             ),
           )
@@ -136,27 +135,61 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget MenuButton(BuildContext context) {
+  Widget buildButtonMenu(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text('Setting'),
+            decoration: BoxDecoration(color: Color(0xFF676F9D)),
+            child: Text(
+              'Setting',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
           ),
           ListTile(
-            title: const Text('Item1'),
+            leading: const Icon(
+              FontAwesomeIcons.house,
+              size: 25,
+              color: Color(0xffffb17a),
+            ),
+            title: const Text(
+              'Home',
+              style: TextStyle(fontSize: 24),
+            ),
+            visualDensity: const VisualDensity(vertical: 0),
             onTap: () {
               Navigator.pop(context);
             },
           ),
+          const Divider(height: 15),
           ListTile(
-              title: const Text('Log Out'),
-              onTap: () async {
+            leading: const Icon(
+              FontAwesomeIcons.gear,
+              size: 25,
+              color: Color(0xffffb17a),
+            ),
+            title: const Text(
+              'Setting',
+              style: TextStyle(fontSize: 24),
+            ),
+            visualDensity: const VisualDensity(vertical: 0),
+            onTap: () {
+            },
+          ),
+          const Divider(height: 15),
+          ListTile(
+              leading: const Icon(
+                FontAwesomeIcons.rightFromBracket,
+                size: 25,
+                color: Color(0xffffb17a),
+              ),
+              title: const Text(
+                'Log Out',
+                style: TextStyle(fontSize: 24),
+              ),
+              onTap: () {
                 FirebaseAuth.instance.signOut();
-
-                await widget.googleSignIn.signOut();
 
                 Navigator.push(
                   context,

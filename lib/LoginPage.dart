@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -165,7 +166,7 @@ class _LoginPage extends State<LoginPage> {
         ),
       ),
       onTap: () {
-        loginWithGoogle(context);
+        loginWithGoogle();
       },
     );
   }
@@ -290,7 +291,7 @@ class _LoginPage extends State<LoginPage> {
     }
   }
 
-  Future checkAuth(BuildContext context) async {
+  Future checkAuth(context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       print("Already logged in");
@@ -301,18 +302,24 @@ class _LoginPage extends State<LoginPage> {
     }
   }
 
-  Future loginWithGoogle(BuildContext context) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: [
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-    GoogleSignInAccount? user = await googleSignIn.signIn();
-    GoogleSignInAuthentication? userAuth = await user?.authentication;
+  Future loginWithGoogle() async {
+    try {
+      GoogleSignIn googleSignIn = GoogleSignIn();
+      GoogleSignInAccount? user = await googleSignIn.signIn();
+      GoogleSignInAuthentication? userAuth = await user!.authentication;
 
-    await _auth.signInWithCredential(GoogleAuthProvider.credential(
-        idToken: userAuth?.idToken, accessToken: userAuth?.accessToken));
-    checkAuth(context); // after success route to home.
+      await _auth.signInWithCredential(
+        GoogleAuthProvider.credential(
+            idToken: userAuth.idToken, accessToken: userAuth.accessToken),
+      );
+      checkAuth(context); // after success route to home.
+    } on PlatformException catch (e) {
+      if( e.code == GoogleSignIn.kNetworkError) {
+        print("A network error (such as timeout, interrupted connection or unreachable host) has occurred.");
+      } else {
+        print("Something went wrong.");
+      }
+    }
   }
 
   // buildButtonForgotPassword() {

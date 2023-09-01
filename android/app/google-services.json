@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "194379848713-ukm6ffsop3a0nn5b4dm6usgq0sn2pbqd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carrental_app",
+            "certificate_hash": "a15cea8bff6fd214d36b8b35a54b4f3bcc8b62ab"
+          }
+        },
+        {
           "client_id": "194379848713-b9r97uma4sfl8js1illuucj0e5qehr6l.apps.googleusercontent.com",
           "client_type": 3
         }
