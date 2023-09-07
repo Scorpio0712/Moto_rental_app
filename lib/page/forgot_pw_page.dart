@@ -1,19 +1,23 @@
-import 'package:carrental_app/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
 
-class ResetPassPage extends StatefulWidget {
-  const ResetPassPage({super.key});
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ResetPassPage();
+  State<StatefulWidget> createState() => _ForgotPasswordPage();
 }
 
-class _ResetPassPage extends State<ResetPassPage> {
+class _ForgotPasswordPage extends State<ForgotPasswordPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  TextEditingController emailController = TextEditingController();
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +103,6 @@ class _ResetPassPage extends State<ResetPassPage> {
       ),
       onTap: () {
         resetPassword();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginPage(),
-            ));
       },
     );
   }
@@ -112,13 +111,19 @@ class _ResetPassPage extends State<ResetPassPage> {
     return Container(
         width: 300,
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(16)),
         child: TextField(
-            controller: emailController,
-            decoration: const InputDecoration(
+            controller: _emailController,
+            decoration: InputDecoration(
               hintText: "Email",
-              border: OutlineInputBorder(),
+              filled: true,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xffffb17a)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(fontSize: 18)));
@@ -135,23 +140,47 @@ class _ResetPassPage extends State<ResetPassPage> {
         ));
   }
 
-  resetPassword() {
-    final email = emailController.text.trim();
-    _auth.sendPasswordResetEmail(email: email);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        "We send the detail to $email successfully.",
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-      backgroundColor: Colors.green,
-      duration: const Duration(milliseconds: 1500),
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-    ));
+  Future resetPassword() async {
+    try {
+      await _auth.sendPasswordResetEmail(email: _emailController.text.trim());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "We send the detail to $_auth successfully.",
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(milliseconds: 1500),
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print(e.code);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'User not found',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(milliseconds: 1500),
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        );
+      }
+    }
   }
 }

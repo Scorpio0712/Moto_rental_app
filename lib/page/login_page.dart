@@ -2,25 +2,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'SignUpPage.dart';
-import 'HomePage.dart';
-import 'ResetPassPage.dart';
+import 'home_page.dart';
+import 'forgot_pw_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final VoidCallback showRegisterPage;
+  const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LoginPage();
 }
 
 class _LoginPage extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,70 +69,68 @@ class _LoginPage extends State<LoginPage> {
                         buildTextFieldEmail(),
                         buildTextFieldPassword(),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              TextButton(
+                              GestureDetector(
                                 child: const Text(
                                   "Forgot password?",
                                   style: TextStyle(
                                     color: Color(0xFF000AFF),
                                   ),
                                 ),
-                                onPressed: () {
+                                onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ResetPassPage()),
+                                    MaterialPageRoute(builder: (context) {
+                                      return ForgotPasswordPage();
+                                    }),
                                   );
                                 },
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         buildButtonSignIn(),
                       ],
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     const Text(
                       "Or Log in using",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     buildButtonGoogle(),
                     const SizedBox(
                       height: 80,
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text("Don't have an account?"),
-                          TextButton(
+                          GestureDetector(
                             child: const Text(
                               "Sign Up",
                               style: TextStyle(
                                 color: Color(0xFF000AFF),
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignUpPage()));
-                            },
+                            onTap: widget.showRegisterPage,
                           ),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -199,7 +202,7 @@ class _LoginPage extends State<LoginPage> {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(16)),
       child: TextField(
-        controller: emailController,
+        controller: _emailController,
         decoration: InputDecoration(
           hintText: "Email",
           border: OutlineInputBorder(),
@@ -218,7 +221,7 @@ class _LoginPage extends State<LoginPage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
-        controller: passwordController,
+        controller: _passwordController,
         obscureText: true,
         decoration: InputDecoration(
           hintText: "Password",
@@ -229,11 +232,12 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  signIn() async {
+  Future signIn() async {
     try {
-      final credentials = await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      final credentials =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
       print("sign in success ${credentials.user?.email}");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -308,14 +312,15 @@ class _LoginPage extends State<LoginPage> {
       GoogleSignInAccount? user = await googleSignIn.signIn();
       GoogleSignInAuthentication? userAuth = await user!.authentication;
 
-      await _auth.signInWithCredential(
+      await FirebaseAuth.instance.signInWithCredential(
         GoogleAuthProvider.credential(
             idToken: userAuth.idToken, accessToken: userAuth.accessToken),
       );
       checkAuth(context); // after success route to home.
     } on PlatformException catch (e) {
-      if( e.code == GoogleSignIn.kNetworkError) {
-        print("A network error (such as timeout, interrupted connection or unreachable host) has occurred.");
+      if (e.code == GoogleSignIn.kNetworkError) {
+        print(
+            "A network error (such as timeout, interrupted connection or unreachable host) has occurred.");
       } else {
         print("Something went wrong.");
       }

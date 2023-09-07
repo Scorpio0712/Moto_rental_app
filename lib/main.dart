@@ -1,63 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:carrental_app/auth/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'LoginPage.dart';
-import 'SignUpPage.dart';
-import 'HomePage.dart';
-import 'ResetPassPage.dart';
-
-// ...
-
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final user = FirebaseAuth.instance.currentUser;
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if(user == null) {
-      return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
-      initialRoute: '/',
-      routes: {
-        '/sign-up': (context) => const SignUpPage(),
-        '/Reset-password': (context) => const ResetPassPage(),
-        
-      },
-      
+      home: MainPage(),
     );
-    } else {
-      return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      initialRoute: '/',
-      routes: {
-        '/log-in': (context) => const LoginPage(),
-        '/sign-up': (context) => const SignUpPage(),
-        '/Reset-password': (context) => const ResetPassPage(),
-      },
-      
-    );
-    }
   }
-
-  // Future checkAuth(BuildContext context) async {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //   if (user != null) {
-  //     print("Already logged in");
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => HomePage()),
-  //     );
-  //   }
-  // }
-
 }

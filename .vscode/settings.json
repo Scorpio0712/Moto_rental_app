@@ -3,6 +3,7 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "cSpell.words": [
         "carrental",
+        "Firestore",
         "Fluttertoast"
     ],
     "cmake.sourceDirectory": "D:/Work/DE-Project/carrental2_app/linux"

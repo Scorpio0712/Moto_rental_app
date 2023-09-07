@@ -1,17 +1,19 @@
-import 'package:carrental_app/RentPayPage.dart';
+import 'package:carrental_app/page/RentPayPage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-class CarInforPage extends StatefulWidget {
-  const CarInforPage({super.key});
+class CarInformationPage extends StatefulWidget {
+  const CarInformationPage({Key? key}): super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _CarInforPage();
+  State<StatefulWidget> createState() => _CarInformationPage();
 }
 
-class _CarInforPage extends State<CarInforPage> {
+class _CarInformationPage extends State<CarInformationPage> {
+  
   TextEditingController dateController = TextEditingController();
+  late final String documentId;
 
   @override
   void initState() {
@@ -67,67 +69,7 @@ class _CarInforPage extends State<CarInforPage> {
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Hello',
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'data',
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              "aaa",
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Hello',
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'data',
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              "aaa",
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
+                      
                     ],
                   ),
                 ),
