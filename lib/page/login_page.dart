@@ -84,7 +84,7 @@ class _LoginPage extends State<LoginPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) {
-                                      return ForgotPasswordPage();
+                                      return const ForgotPasswordPage();
                                     }),
                                   );
                                 },
@@ -120,13 +120,13 @@ class _LoginPage extends State<LoginPage> {
                         children: [
                           const Text("Don't have an account?"),
                           GestureDetector(
+                            onTap: widget.showRegisterPage,
                             child: const Text(
                               "Sign Up",
                               style: TextStyle(
                                 color: Color(0xFF000AFF),
                               ),
                             ),
-                            onTap: widget.showRegisterPage,
                           ),
                         ],
                       ),
@@ -177,17 +177,17 @@ class _LoginPage extends State<LoginPage> {
   Widget buildButtonSignIn() {
     return InkWell(
       child: Container(
-        constraints: BoxConstraints.expand(height: 50, width: 150),
-        child: Text(
+        constraints: const BoxConstraints.expand(height: 50, width: 150),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25), color: const Color(0xFF2D3250)),
+        // margin: EdgeInsets.only(top: 16),
+        padding: const EdgeInsets.all(12),
+        child: const Text(
           "Sign in",
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25), color: Color(0xFF2D3250)),
-        // margin: EdgeInsets.only(top: 16),
-        padding: EdgeInsets.all(12),
       ),
       onTap: () {
         signIn();
@@ -198,16 +198,16 @@ class _LoginPage extends State<LoginPage> {
   Container buildTextFieldEmail() {
     return Container(
       width: 300,
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(16)),
       child: TextField(
         controller: _emailController,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: "Email",
           border: OutlineInputBorder(),
         ),
-        style: TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }
@@ -215,7 +215,7 @@ class _LoginPage extends State<LoginPage> {
   Container buildTextFieldPassword() {
     return Container(
       width: 300,
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white12,
         borderRadius: BorderRadius.circular(16),
@@ -223,11 +223,11 @@ class _LoginPage extends State<LoginPage> {
       child: TextField(
         controller: _passwordController,
         obscureText: true,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: "Password",
           border: OutlineInputBorder(),
         ),
-        style: TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }
@@ -301,7 +301,7 @@ class _LoginPage extends State<LoginPage> {
       print("Already logged in");
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }

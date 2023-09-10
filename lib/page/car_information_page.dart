@@ -1,23 +1,26 @@
 import 'package:carrental_app/page/RentPayPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class CarInformationPage extends StatefulWidget {
-  const CarInformationPage({Key? key}): super(key: key);
+  final String motorSelected;
+  const CarInformationPage({Key? key, required this.motorSelected})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CarInformationPage();
 }
 
 class _CarInformationPage extends State<CarInformationPage> {
-  
+  CollectionReference _motor = FirebaseFirestore.instance.collection('motor');
   TextEditingController dateController = TextEditingController();
-  late final String documentId;
 
   @override
   void initState() {
     dateController.text = "";
+
     super.initState();
   }
 
@@ -25,9 +28,10 @@ class _CarInformationPage extends State<CarInformationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xFF2D3250),
         title: const Text(
-          'Topic',
+          'Information',
           style: TextStyle(
             color: Color(0xFFF9B17A),
             fontSize: 20,
@@ -44,7 +48,7 @@ class _CarInformationPage extends State<CarInformationPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  height: 450,
+                  height: 425,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                     color: Color(0xFF2D3250),
@@ -52,24 +56,75 @@ class _CarInformationPage extends State<CarInformationPage> {
                       bottom: Radius.circular(10),
                     ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Text(
-                        'Yamaha Aerox',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFFF9B17A),
-                          fontSize: 18,
+                      // const Text(
+                      //   'Yamaha Aerox',
+                      //   textAlign: TextAlign.center,
+                      //   style: TextStyle(
+                      //     color: Color(0xFFF9B17A),
+                      //     fontSize: 18,
+                      //   ),
+                      // ),
+                      GestureDetector(
+                        child: FutureBuilder<DocumentSnapshot>(
+                          future: _motor.doc(widget.motorSelected).get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              Map<String, dynamic> data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+                              return Text(
+                                data['brand'] + ' ' + data['model'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFF9B17A),
+                                  fontSize: 18,
+                                ),
+                              );
+                            }
+                            return const Text('Loading...');
+                          },
                         ),
                       ),
-                      Image(
+                      const Image(
                         image: AssetImage('images/2.png'),
-                        width: 400,
+                        width: 350,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
-                      
+                      GestureDetector(
+                        child: FutureBuilder<DocumentSnapshot>(
+                          future: _motor.doc(widget.motorSelected).get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              Map<String, dynamic> data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Text(
+                                    'Enging Capacity: \n${data['e.capacity']} CC',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  Text(
+                                    'Color: \n${data['color']}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                ],
+                              );
+                            }
+                            return const Text('Loading...');
+                          },
+                        ),
+                      )
                     ],
                   ),
                 ),

@@ -262,48 +262,48 @@ class _RegisterPage extends State<RegisterPage> {
     if (_passwordController == _confirmController &&
         _passwordController.text.length >= 6) {
       return true;
-      // } else if (_passwordController == _confirmController &&
-      //     _passwordController.text.length < 6) {
-      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //     content: const Text(
-      //       'Password must be at least 6 characters',
-      //       textAlign: TextAlign.center,
-      //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      //     ),
-      //     backgroundColor: Colors.yellowAccent,
-      //     duration: const Duration(milliseconds: 1500),
-      //     width: MediaQuery.of(context).size.width,
-      //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //     behavior: SnackBarBehavior.floating,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(10.0),
-      //     ),
-      //   ));
-      //   return false;
+      } else if (_passwordController == _confirmController &&
+          _passwordController.text.length < 6) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text(
+            'Password must be at least 6 characters',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.yellowAccent,
+          duration: const Duration(milliseconds: 1500),
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ));
+        return false;
     } else {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: const Text(
-      //       'Password and Confirm-password is not match.',
-      //       textAlign: TextAlign.center,
-      //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      //     ),
-      //     backgroundColor: Colors.red,
-      //     duration: const Duration(milliseconds: 1500),
-      //     width: MediaQuery.of(context).size.width,
-      //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //     behavior: SnackBarBehavior.floating,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(10.0),
-      //     ),
-      //   ),
-      // );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Password and Confirm-password is not match.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(milliseconds: 1500),
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
       return false;
     }
   }
 
   Future signUp() async {
-    // if (passwordConfirm()) {
+    if (passwordConfirm()) {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -313,24 +313,24 @@ class _RegisterPage extends State<RegisterPage> {
         _lastNameController.text.trim(),
         _emailController.text.trim(),
       );
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: const Text(
-      //       'Sign up user successful.',
-      //       textAlign: TextAlign.center,
-      //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      //     ),
-      //     backgroundColor: Colors.green,
-      //     duration: const Duration(milliseconds: 1500),
-      //     width: MediaQuery.of(context).size.width,
-      //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //     behavior: SnackBarBehavior.floating,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(10.0),
-      //     ),
-      //   ),
-      // );
-    // }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Sign up user successful.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(milliseconds: 1500),
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
+    }
   }
 
   Future addUserDetails(String firstName, String lastName, String email) async {
