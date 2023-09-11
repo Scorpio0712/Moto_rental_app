@@ -14,13 +14,26 @@ class CarInformationPage extends StatefulWidget {
 }
 
 class _CarInformationPage extends State<CarInformationPage> {
-  CollectionReference _motor = FirebaseFirestore.instance.collection('motor');
-  TextEditingController dateController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
+  final CollectionReference _motor =
+      FirebaseFirestore.instance.collection('motor');
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+
+  int? getSelectDateRange() {
+    if (_startDate != null && _endDate != null) {
+      final durationDate = _endDate?.difference(_startDate!);
+      return durationDate?.inDays;
+    } else {
+      return 0;
+    }
+  }
 
   @override
   void initState() {
-    dateController.text = "";
-
+    _startDateController.text = "";
+    _endDateController.text = "";
     super.initState();
   }
 
@@ -48,7 +61,7 @@ class _CarInformationPage extends State<CarInformationPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  height: 425,
+                  height: 375,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                     color: Color(0xFF2D3250),
@@ -58,14 +71,6 @@ class _CarInformationPage extends State<CarInformationPage> {
                   ),
                   child: Column(
                     children: [
-                      // const Text(
-                      //   'Yamaha Aerox',
-                      //   textAlign: TextAlign.center,
-                      //   style: TextStyle(
-                      //     color: Color(0xFFF9B17A),
-                      //     fontSize: 18,
-                      //   ),
-                      // ),
                       GestureDetector(
                         child: FutureBuilder<DocumentSnapshot>(
                           future: _motor.doc(widget.motorSelected).get(),
@@ -130,35 +135,30 @@ class _CarInformationPage extends State<CarInformationPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const SizedBox(
-                  height: 20,
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
-                      height: 100,
+                      height: 75,
                       width: 135,
                       child: TextField(
-                        controller: dateController,
+                        controller: _startDateController,
                         decoration: const InputDecoration(
                           icon: Icon(FontAwesomeIcons.calendar),
-                          labelText: "By Date: ",
+                          labelText: "Start Date: ",
                         ),
                         readOnly: true,
                         onTap: () async {
-                          final date = await pickDate();
-                          if (date != null) {
-                            print(date);
+                          _startDate = await pickDate();
+                          if (_startDate != null) {
                             String formattedDate =
-                                DateFormat('dd/MM/yyyy').format(date);
-                            print(formattedDate);
-
+                                DateFormat('dd/MM/yyyy').format(_startDate!);
                             setState(() {
-                              dateController.text = formattedDate;
+                              _startDateController.text = formattedDate;
                             });
                           } else {
                             print('Date is not Select');
@@ -167,25 +167,22 @@ class _CarInformationPage extends State<CarInformationPage> {
                       ),
                     ),
                     SizedBox(
-                      height: 100,
+                      height: 75,
                       width: 135,
                       child: TextField(
-                        controller: dateController,
+                        controller: _endDateController,
                         decoration: const InputDecoration(
                           icon: Icon(FontAwesomeIcons.calendar),
-                          labelText: "To Date: ",
+                          labelText: "End Date: ",
                         ),
                         readOnly: true,
                         onTap: () async {
-                          final date = await pickDate();
-                          if (date != null) {
-                            print(date);
+                          _endDate = await pickDate();
+                          if (_endDate != null) {
                             String formattedDate =
-                                DateFormat('dd/MM/yyyy').format(date);
-                            print(formattedDate);
-
+                                DateFormat('dd/MM/yyyy').format(_endDate!);
                             setState(() {
-                              dateController.text = formattedDate;
+                              _endDateController.text = formattedDate;
                             });
                           } else {
                             print('Date is not Select');
@@ -195,18 +192,52 @@ class _CarInformationPage extends State<CarInformationPage> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 75,
+                const SizedBox(height: 10),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Number of Days Selected: ${getSelectDateRange()} days',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 15),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2D3250),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.all(20),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Rent Details',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xFFF9B17A)),
+                      ),
+                      Text(
+                        '=',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xFFF9B17A)),
+                      ),
+                      Text(
+                        '300 Baht / day \n250 Baht / week \n200 Baht / week',
+                        style: TextStyle(color: Color(0xFFF9B17A)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
                 Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text(
-                        '300 Bath / Day',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
