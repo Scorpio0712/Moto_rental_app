@@ -1,6 +1,6 @@
 # Moto_rental_app
 
-A new Flutter project.
+This is Thesis Project. This project is about motorcycle rental in daily life. So, it is motor rental application that problem soving in life.
 
 ## Getting Started
 
