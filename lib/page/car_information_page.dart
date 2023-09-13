@@ -1,4 +1,4 @@
-import 'package:carrental_app/page/RentPayPage.dart';
+import 'package:carrental_app/page/rent_pay_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,27 +14,42 @@ class CarInformationPage extends StatefulWidget {
 }
 
 class _CarInformationPage extends State<CarInformationPage> {
+  late dynamic motorSelectedKey = widget.motorSelected;
   DateTime? _startDate;
   DateTime? _endDate;
-  final CollectionReference _motor =
-      FirebaseFirestore.instance.collection('motor');
+
+  late final _motor =
+      FirebaseFirestore.instance.collection('motor').doc(motorSelectedKey);
+
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
-  int? getSelectDateRange() {
-    if (_startDate != null && _endDate != null) {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  int getSelectDateRange() {
+    if (_startDate == _endDate && _startDate != null && _endDate != null) {
+      return 1;
+    } else if (_startDate != null && _endDate != null) {
       final durationDate = _endDate?.difference(_startDate!);
-      return durationDate?.inDays;
+      return durationDate!.inDays + 1;
     } else {
       return 0;
     }
   }
 
-  @override
-  void initState() {
-    _startDateController.text = "";
-    _endDateController.text = "";
-    super.initState();
+  void navigatorToMotorDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RentPayPage(
+          motorDetail: motorSelectedKey,
+          daysRent: getSelectDateRange(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -73,7 +88,7 @@ class _CarInformationPage extends State<CarInformationPage> {
                     children: [
                       GestureDetector(
                         child: FutureBuilder<DocumentSnapshot>(
-                          future: _motor.doc(widget.motorSelected).get(),
+                          future: _motor.get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
@@ -101,7 +116,7 @@ class _CarInformationPage extends State<CarInformationPage> {
                       ),
                       GestureDetector(
                         child: FutureBuilder<DocumentSnapshot>(
-                          future: _motor.doc(widget.motorSelected).get(),
+                          future: _motor.get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
@@ -112,7 +127,7 @@ class _CarInformationPage extends State<CarInformationPage> {
                                     MainAxisAlignment.spaceAround,
                                 children: <Widget>[
                                   Text(
-                                    'Enging Capacity: \n${data['e.capacity']} CC',
+                                    'Engine Capacity: \n${data['e.capacity']} CC',
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         color: Colors.white, fontSize: 20),
@@ -212,56 +227,62 @@ class _CarInformationPage extends State<CarInformationPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   margin: const EdgeInsets.symmetric(horizontal: 25.0),
-                  padding: const EdgeInsets.all(20),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.all(15),
+                  child: const Column(
                     children: [
                       Text(
                         'Rent Details',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xFFF9B17A)),
+                        style: TextStyle(
+                            color: Color(0xFFF9B17A),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        '=',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Color(0xFFF9B17A)),
-                      ),
-                      Text(
-                        '300 Baht / day \n250 Baht / week \n200 Baht / week',
-                        style: TextStyle(color: Color(0xFFF9B17A)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            '1 days \n1 week \n1 month',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xFFF9B17A)),
+                          ),
+                          Text(
+                            '=',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xFFF9B17A)),
+                          ),
+                          Text(
+                            '300 Baht / day \n250 Baht / day \n200 Baht / day',
+                            style: TextStyle(color: Color(0xFFF9B17A)),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 25),
                 Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RentPayPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF9B17A),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        child: const Text('Rent Now'),
+                  child: InkWell(
+                    child: Container(
+                      constraints:
+                          const BoxConstraints.expand(height: 45, width: 125),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xFFF9B17A)),
+                      // margin: EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.all(10),
+                      child: const Text(
+                        "Rent now",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xFF2D3250),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
-                    ],
+                    ),
+                    onTap: () => navigatorToMotorDetails(),
                   ),
-                ),
+                )
               ],
             ),
           ],
@@ -272,8 +293,8 @@ class _CarInformationPage extends State<CarInformationPage> {
 
   Future<DateTime?> pickDate() => showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
+        initialDate: DateTime.now().add(const Duration(days: 1)),
+        firstDate: DateTime.now().add(const Duration(days: 1)),
         lastDate: DateTime(2100),
       );
 }

@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'RentComPage.dart';
+import 'rent_complete_page.dart';
 
 class RentPayPage extends StatefulWidget {
-  const RentPayPage({super.key});
+  final String motorDetail;
+  final int daysRent;
+  const RentPayPage(
+      {Key? key, required this.motorDetail, required this.daysRent})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _RentPayPage();
@@ -18,12 +23,34 @@ const List<String> list = <String>[
 ];
 
 class _RentPayPage extends State<RentPayPage> {
+  late final dynamic _motorDetail = widget.motorDetail;
+  late final int priceRent;
+  late final _motor =
+      FirebaseFirestore.instance.collection('motor').doc(_motorDetail);
   String dropdownValue = list.first;
+
+  int managePrice() {
+    if (widget.daysRent >= 30) {
+      priceRent = 200;
+    } else if (widget.daysRent >= 7 && widget.daysRent < 30) {
+      priceRent = 250;
+    } else {
+      priceRent = 300;
+    }
+    return priceRent;
+  }
+
+  int calculateTotalPrice() {
+    final int totalPrice;
+    totalPrice = priceRent * widget.daysRent;
+    return totalPrice;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xFF2D3250),
         title: const Text(
           'Topic',
@@ -50,32 +77,43 @@ class _RentPayPage extends State<RentPayPage> {
                       bottom: Radius.circular(10),
                     ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Image(
+                          const Image(
                             image: AssetImage('images/2.png'),
                             width: 125,
                           ),
-                          Text(
-                            'Yamaha Aerox',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFFF9B17A),
-                              fontSize: 18,
+                          GestureDetector(
+                            child: FutureBuilder<DocumentSnapshot>(
+                              future: _motor.get(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Map<String, dynamic> data = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+                                  return Text(
+                                    data['brand'] + ' ' + data['model'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFF9B17A),
+                                      fontSize: 18,
+                                    ),
+                                  );
+                                }
+                                return const Text('Loading...');
+                              },
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 50,
-                      ),
+                      const SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -88,25 +126,23 @@ class _RentPayPage extends State<RentPayPage> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '10',
-                                style: TextStyle(color: Colors.white),
+                                '${widget.daysRent}',
+                                style: const TextStyle(color: Colors.white),
                               ),
                               Text(
-                                '100',
-                                style: TextStyle(color: Colors.white),
+                                '${managePrice()}',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ],
                           )
                         ],
                       ),
-                      Divider(
+                      const Divider(
                         height: 30,
                         thickness: 2,
                         indent: 20,
@@ -116,7 +152,7 @@ class _RentPayPage extends State<RentPayPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -125,15 +161,15 @@ class _RentPayPage extends State<RentPayPage> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '3,000',
-                                style: TextStyle(color: Colors.white),
+                                '${calculateTotalPrice()}',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ],
                           )
@@ -159,7 +195,7 @@ class _RentPayPage extends State<RentPayPage> {
                       height: 20,
                       width: 25,
                     ),
-                    Container(
+                    SizedBox(
                       width: 200,
                       child: DropdownButton<String>(
                         value: dropdownValue,
