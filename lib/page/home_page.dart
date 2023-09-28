@@ -1,12 +1,13 @@
-import 'package:carrental_app/components/drawer.dart';
+import 'package:carrental_app/widget/drawer.dart';
 import 'package:carrental_app/page/car_information_page.dart';
-import 'package:carrental_app/read%20data/get_motor_data.dart';
+import 'package:carrental_app/service/get_motor_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  static const String routeName = '/home-page';
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -32,7 +33,9 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CarInformationPage(motorSelected: _motor_DocsIds[index],),
+        builder: (context) => CarInformationPage(
+          motorSelected: _motor_DocsIds[index],
+        ),
       ),
     );
   }

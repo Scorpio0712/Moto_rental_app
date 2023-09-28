@@ -108,7 +108,7 @@ class _CarInformationPage extends State<CarInformationPage> {
                         ),
                       ),
                       const Image(
-                        image: AssetImage('images/2.png'),
+                        image: AssetImage('assets/2.png'),
                         width: 350,
                       ),
                       const SizedBox(

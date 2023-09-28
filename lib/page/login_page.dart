@@ -8,6 +8,7 @@ import 'home_page.dart';
 import 'forgot_pw_page.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String routeName = '/login-page';
   final VoidCallback showRegisterPage;
   const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
 
@@ -18,19 +19,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPage extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
@@ -179,7 +171,8 @@ class _LoginPage extends State<LoginPage> {
       child: Container(
         constraints: const BoxConstraints.expand(height: 50, width: 150),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25), color: const Color(0xFF2D3250)),
+            borderRadius: BorderRadius.circular(25),
+            color: const Color(0xFF2D3250)),
         // margin: EdgeInsets.only(top: 16),
         padding: const EdgeInsets.all(12),
         child: const Text(
@@ -326,27 +319,4 @@ class _LoginPage extends State<LoginPage> {
       }
     }
   }
-
-  // buildButtonForgotPassword() {
-  //   return InkWell(
-  //     child: Container(
-  //       constraints: BoxConstraints.expand(height: 50),
-  //       child: Text(
-  //         "Forgot password",
-  //         textAlign: TextAlign.center,
-  //         style: TextStyle(fontSize: 18, color: Colors.white),
-  //       ),
-  //       decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(16), color: Colors.red[300]),
-  //       margin: EdgeInsets.only(top: 12),
-  //       padding: EdgeInsets.all(12),
-  //     ),
-  //     onTap: () => navigateToResetPasswordPage(context),
-  //   );
-  // }
-
-  // navigateToResetPassPage(BuildContext context) {
-  //   Navigator.push(
-  //       context, MaterialPageRoute(builder: (context) => ResetPassPage()));
-  // }
 }

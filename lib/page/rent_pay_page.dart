@@ -1,8 +1,9 @@
+import 'package:carrental_app/widget/qr_code.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'rent_complete_page.dart';
+import 'package:flutter/material.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RentPayPage extends StatefulWidget {
   final String motorDetail;
@@ -16,10 +17,7 @@ class RentPayPage extends StatefulWidget {
 }
 
 const List<String> list = <String>[
-  'QR Payment',
-  'Master Card',
-  'Visa',
-  'Mobile Banking'
+  'Qr Code',
 ];
 
 class _RentPayPage extends State<RentPayPage> {
@@ -83,7 +81,7 @@ class _RentPayPage extends State<RentPayPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           const Image(
-                            image: AssetImage('images/2.png'),
+                            image: AssetImage('assets/2.png'),
                             width: 125,
                           ),
                           GestureDetector(
@@ -226,17 +224,16 @@ class _RentPayPage extends State<RentPayPage> {
                   ],
                 ),
                 const SizedBox(
-                  height: 325,
+                  height: 10,
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RentComPage(),
-                      ),
-                    );
-                  },
+                    showDialog(
+                        builder: (context) => PersonDetailsDialog(),
+                        context: context,
+                        barrierDismissible: false);
+                  }, // show dialog
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF9B17A),
                     shape: RoundedRectangleBorder(
@@ -247,7 +244,9 @@ class _RentPayPage extends State<RentPayPage> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
-                  child: const Text('Pay now'),
+                  child: const Text(
+                    'Pay now',
+                  ),
                 ),
               ],
             ),

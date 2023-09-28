@@ -57,7 +57,7 @@ class _RentComPage extends State<RentComPage> {
                     height: 20,
                   ),
                   Image(
-                    image: AssetImage('images/2.png'),
+                    image: AssetImage('assets/2.png'),
                     width: 125,
                   ),
                   Text(
@@ -149,7 +149,7 @@ class _RentComPage extends State<RentComPage> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 300,
             ),
             Row(
@@ -161,13 +161,13 @@ class _RentComPage extends State<RentComPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomePage(),
+                        builder: (context) => const HomePage(),
                       ),
                     );
                   },
-                  icon: Icon(FontAwesomeIcons.house,),
+                  icon: const Icon(FontAwesomeIcons.house,),
                 ),
-                Text('Home'),
+                const Text('Home'),
                 ],)
                 // IconButton(
                 //   onPressed: () {

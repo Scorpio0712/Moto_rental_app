@@ -3,6 +3,7 @@ import 'package:carrental_app/page/register_page.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
+  static const String routeName = '/auth-screen';
   const AuthPage({Key? key}) : super(key: key);
 
   @override

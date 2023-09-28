@@ -1,4 +1,4 @@
-import 'package:carrental_app/components/my_list_tile.dart';
+import 'package:carrental_app/widget/my_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
