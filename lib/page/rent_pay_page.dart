@@ -229,7 +229,7 @@ class _RentPayPage extends State<RentPayPage> {
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
-                        builder: (context) => PersonDetailsDialog(),
+                        builder: (context) => QRcodeAlert(motorDetail: _motorDetail, daysRent: widget.daysRent, priceRent: priceRent,),
                         context: context,
                         barrierDismissible: false);
                   }, // show dialog

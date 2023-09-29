@@ -1,15 +1,36 @@
 import 'package:carrental_app/page/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class RentComPage extends StatefulWidget {
-  const RentComPage({super.key});
+  final String motorDetail;
+  final int daysRent;
+  final int priceRent;
+  const RentComPage(
+      {Key? key,
+      required this.motorDetail,
+      required this.daysRent,
+      required this.priceRent})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _RentComPage();
 }
 
 class _RentComPage extends State<RentComPage> {
+  late final _motor =
+      FirebaseFirestore.instance.collection('motor').doc(widget.motorDetail);
+  late final user = FirebaseAuth.instance.currentUser!.email;
+
+  String calculateTotalPrice() {
+    final int totalPrice;
+    totalPrice = widget.priceRent * widget.daysRent;
+    return NumberFormat.simpleCurrency(locale: 'TH').format(totalPrice);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,42 +60,45 @@ class _RentComPage extends State<RentComPage> {
                   bottom: Radius.circular(10),
                 ),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Text(
-                    'Name Lastname',
-                    style: TextStyle(color: Color(0xFFF9B17A), fontSize: 18),
+                    user!,
+                    style:
+                        const TextStyle(color: Color(0xFFF9B17A), fontSize: 18),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Icon(
-                    FontAwesomeIcons.arrowDownLong,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Image(
+                  const SizedBox(height: 20),
+                  const Icon(FontAwesomeIcons.arrowDownLong,
+                      color: Colors.white, size: 30),
+                  const SizedBox(height: 20),
+                  const Image(
                     image: AssetImage('assets/2.png'),
                     width: 125,
                   ),
-                  Text(
-                    'Yamaha Aerox',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFFF9B17A),
-                      fontSize: 18,
+                  GestureDetector(
+                    child: FutureBuilder<DocumentSnapshot>(
+                      future: _motor.get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          Map<String, dynamic> data =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          return Text(
+                            data['brand'] + ' ' + data['model'],
+                            style: const TextStyle(
+                              color: Color(0xFFF9B17A),
+                              fontSize: 18,
+                            ),
+                          );
+                        }
+                        return const Text('Loading...');
+                      },
                     ),
                   ),
-                  SizedBox(
-                    height: 50,
-                  ),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -82,30 +106,28 @@ class _RentComPage extends State<RentComPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           Text(
-                            'Prices(Bath/Day)',
+                            'Prices(Per Day)',
                             style: TextStyle(color: Colors.white),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
+                      const SizedBox(width: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '10',
-                            style: TextStyle(color: Colors.white),
+                            '${widget.daysRent}',
+                            style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            '100',
-                            style: TextStyle(color: Colors.white),
+                            '${widget.priceRent}',
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  Divider(
+                  const Divider(
                     height: 20,
                     thickness: 2,
                     indent: 20,
@@ -115,11 +137,11 @@ class _RentComPage extends State<RentComPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Amounts(Bath)',
+                            'Amounts',
                             style: TextStyle(color: Colors.white),
                           ),
                           Text(
@@ -128,17 +150,15 @@ class _RentComPage extends State<RentComPage> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
+                      const SizedBox(width: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '3,000',
-                            style: TextStyle(color: Colors.white),
+                            calculateTotalPrice(),
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          Text(
+                          const Text(
                             '0',
                             style: TextStyle(color: Colors.white),
                           ),
@@ -149,29 +169,31 @@ class _RentComPage extends State<RentComPage> {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 300,
-            ),
+            const SizedBox(height: 290),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(children: [
-                  IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomePage(),
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        FontAwesomeIcons.house,
                       ),
-                    );
-                  },
-                  icon: const Icon(FontAwesomeIcons.house,),
-                ),
-                const Text('Home'),
-                ],)
+                    ),
+                    const Text('Home'),
+                  ],
+                )
                 // IconButton(
                 //   onPressed: () {
-                  
+
                 //   },
                 //   icon: Icon(FontAwesomeIcons.house),
                 // ),
