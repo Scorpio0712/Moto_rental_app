@@ -260,32 +260,13 @@ class _RegisterPage extends State<RegisterPage> {
   }
 
   bool passwordConfirm() {
-    if (_passwordController == _confirmController &&
-        _passwordController.text.length >= 6) {
+    if (_passwordController == _confirmController) {
       return true;
-      } else if (_passwordController == _confirmController &&
-          _passwordController.text.length < 6) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text(
-            'Password must be at least 6 characters',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Colors.yellowAccent,
-          duration: const Duration(milliseconds: 1500),
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ));
-        return false;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            'Password and Confirm-password is not match.',
+            'Error to register',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
@@ -304,7 +285,7 @@ class _RegisterPage extends State<RegisterPage> {
   }
 
   Future signUp() async {
-    if (passwordConfirm()) {
+    // if (passwordConfirm() == true) {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -331,7 +312,7 @@ class _RegisterPage extends State<RegisterPage> {
           ),
         ),
       );
-    }
+    // }
   }
 
   Future addUserDetails(String firstName, String lastName, String email) async {

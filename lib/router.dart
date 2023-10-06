@@ -1,4 +1,4 @@
-import 'package:carrental_app/auth/auth_page.dart';
+import 'package:carrental_app/auth/auth_check.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {

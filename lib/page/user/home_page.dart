@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xFF2D3250),
+        automaticallyImplyLeading: false,
         title: const Text(
           'Motor Rental',
           style: TextStyle(

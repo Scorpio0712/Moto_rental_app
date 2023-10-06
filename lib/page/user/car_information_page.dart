@@ -1,4 +1,4 @@
-import 'package:carrental_app/page/rent_pay_page.dart';
+import 'package:carrental_app/page/user/rent_pay_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
