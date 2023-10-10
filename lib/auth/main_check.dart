@@ -1,5 +1,6 @@
 import 'package:carrental_app/auth/auth_check.dart';
 import 'package:carrental_app/auth/auth_helper.dart';
+import 'package:carrental_app/page/admin/admin_home_page.dart';
 import 'package:carrental_app/page/user/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,7 +17,7 @@ class MainPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data != null) {
           UserHelper.saveUser(snapshot.data);
-          return StreamBuilder<DocumentSnapshot>(
+          return StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection("users")
                   .doc(snapshot.data?.uid)
@@ -24,11 +25,11 @@ class MainPage extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
-                  final userDoc = snapshot.data;
-                  final user = userDoc?.data();
-                  if ((user as Map)['role'] == 'admin') {
-                    return const HomePage();
-                  } else {}
+                  if (snapshot.data?['role'] == 'admin') {
+                    return AdminHomePage();
+                  } else {
+                    return HomePage();
+                  }
                 } else {
                   return const Material(
                     child: Center(
@@ -36,7 +37,6 @@ class MainPage extends StatelessWidget {
                     ),
                   );
                 }
-                return const AuthPage();
               });
         }
         return const AuthPage();

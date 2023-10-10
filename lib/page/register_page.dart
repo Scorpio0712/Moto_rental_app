@@ -1,3 +1,4 @@
+import 'package:carrental_app/auth/auth_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -260,7 +261,7 @@ class _RegisterPage extends State<RegisterPage> {
   }
 
   bool passwordConfirm() {
-    if (_passwordController == _confirmController) {
+    if (_passwordController.text == _confirmController.text) {
       return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -285,16 +286,14 @@ class _RegisterPage extends State<RegisterPage> {
   }
 
   Future signUp() async {
-    // if (passwordConfirm() == true) {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      addUserDetails(
-        _firstNameController.text.trim(),
-        _lastNameController.text.trim(),
-        _emailController.text.trim(),
-      );
+    if (passwordConfirm()) {
+      final user = await AuthHelper.signUpWithEmail(
+          email: _emailController.text, password: _passwordController.text,);
+      // addUserDetails(
+      //   _firstNameController.text.trim(),
+      //   _lastNameController.text.trim(),
+      //   _emailController.text.trim(),
+      // );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
@@ -312,14 +311,14 @@ class _RegisterPage extends State<RegisterPage> {
           ),
         ),
       );
-    // }
+    }
   }
 
-  Future addUserDetails(String firstName, String lastName, String email) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'first name': firstName,
-      'last name': lastName,
-      'email': email,
-    });
-  }
+  // Future addUserDetails(String firstName, String lastName, String email) async {
+  //   await FirebaseFirestore.instance.collection('users').add({
+  //     'first name': firstName,
+  //     'last name': lastName,
+  //     'email': email,
+  //   });
+  // }
 }

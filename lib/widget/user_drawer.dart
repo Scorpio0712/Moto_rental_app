@@ -1,9 +1,9 @@
-import 'package:carrental_app/widget/my_list_tile.dart';
+import 'package:carrental_app/widget/user_list_tile.dart';
 import 'package:flutter/material.dart';
 
-class MyDrawer extends StatelessWidget {
+class UserDrawer extends StatelessWidget {
   final void Function()? onSignOut;
-  const MyDrawer({super.key, required this.onSignOut});
+  const UserDrawer({super.key, required this.onSignOut});
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +17,17 @@ class MyDrawer extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          MyListTile(
+          UserListTile(
             icon: Icons.home,
             text: 'Home',
             onTap: () => Navigator.pop(context),
           ),
-          MyListTile(
+          UserListTile(
             icon: Icons.settings,
             text: 'Setting',
             onTap: () => Navigator,
           ),
-          MyListTile(
+          UserListTile(
             icon: Icons.logout,
             text: 'Log out',
             onTap: onSignOut,

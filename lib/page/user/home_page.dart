@@ -1,5 +1,5 @@
-import 'package:carrental_app/widget/drawer.dart';
-import 'package:carrental_app/page/car_information_page.dart';
+import 'package:carrental_app/widget/user_drawer.dart';
+import 'package:carrental_app/page/user/car_information_page.dart';
 import 'package:carrental_app/service/get_motor_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      endDrawer: MyDrawer(
+      endDrawer: UserDrawer(
         onSignOut: signOut,
       ),
       body: Center(

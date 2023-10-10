@@ -1,3 +1,4 @@
+import 'package:carrental_app/auth/auth_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -227,28 +228,25 @@ class _LoginPage extends State<LoginPage> {
 
   Future signIn() async {
     try {
-      final credentials =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      print("sign in success ${credentials.user?.email}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text(
-          'sign in success',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.green,
-        duration: const Duration(milliseconds: 1500),
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ));
-      checkAuth(context);
+      final user = await AuthHelper.signInWithEmail(
+          email: _emailController.text, password: _passwordController.text);
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text(
+            'sign in success',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(milliseconds: 1500),
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ));
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print(e.code);
@@ -301,15 +299,7 @@ class _LoginPage extends State<LoginPage> {
 
   Future loginWithGoogle() async {
     try {
-      GoogleSignIn googleSignIn = GoogleSignIn();
-      GoogleSignInAccount? user = await googleSignIn.signIn();
-      GoogleSignInAuthentication? userAuth = await user!.authentication;
-
-      await FirebaseAuth.instance.signInWithCredential(
-        GoogleAuthProvider.credential(
-            idToken: userAuth.idToken, accessToken: userAuth.accessToken),
-      );
-      checkAuth(context); // after success route to home.
+      await AuthHelper.signInWithGoogle(); // after success route to home.
     } on PlatformException catch (e) {
       if (e.code == GoogleSignIn.kNetworkError) {
         print(

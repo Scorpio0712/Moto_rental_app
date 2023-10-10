@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MyListTile extends StatelessWidget {
+class AdminListTile extends StatelessWidget {
   final IconData icon;
   final String text;
   final void Function()? onTap;
 
-  const MyListTile(
+  const AdminListTile(
       {super.key, required this.icon, required this.text, required this.onTap});
 
   @override
@@ -20,7 +20,7 @@ class MyListTile extends StatelessWidget {
         onTap: onTap,
         title: Text(
           text,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

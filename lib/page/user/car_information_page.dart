@@ -15,14 +15,13 @@ class CarInformationPage extends StatefulWidget {
 
 class _CarInformationPage extends State<CarInformationPage> {
   late dynamic motorSelectedKey = widget.motorSelected;
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTimeRange selectedDates = DateTimeRange(
+    start: DateTime.now(),
+    end: DateTime.now(),
+  );
 
   late final _motor =
       FirebaseFirestore.instance.collection('motor').doc(motorSelectedKey);
-
-  final TextEditingController _startDateController = TextEditingController();
-  final TextEditingController _endDateController = TextEditingController();
 
   @override
   void initState() {
@@ -30,11 +29,13 @@ class _CarInformationPage extends State<CarInformationPage> {
   }
 
   int getSelectDateRange() {
-    if (_startDate == _endDate && _startDate != null && _endDate != null) {
+    if (DateFormat('dd/MM/yyy').format(selectedDates.start) ==
+        DateFormat('dd/MM/yyy').format(selectedDates.end)) {
       return 1;
-    } else if (_startDate != null && _endDate != null) {
-      final durationDate = _endDate?.difference(_startDate!);
-      return durationDate!.inDays + 1;
+    } else if (DateFormat('dd/MM/yyy').format(selectedDates.start) != null &&
+        DateFormat('dd/MM/yyy').format(selectedDates.end) != null) {
+      final duration = selectedDates.duration.inDays + 1;
+      return duration;
     } else {
       return 0;
     }
@@ -158,55 +159,46 @@ class _CarInformationPage extends State<CarInformationPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
-                      height: 75,
+                      height: 35,
                       width: 135,
-                      child: TextField(
-                        controller: _startDateController,
-                        decoration: const InputDecoration(
-                          icon: Icon(FontAwesomeIcons.calendar),
-                          labelText: "Start Date: ",
-                        ),
-                        readOnly: true,
-                        onTap: () async {
-                          _startDate = await pickDate();
-                          if (_startDate != null) {
-                            String formattedDate =
-                                DateFormat('dd/MM/yyyy').format(_startDate!);
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final DateTimeRange? dateTimeRange =
+                              await showDateRangePicker(
+                            context: context,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(3000),
+                          );
+                          if (dateTimeRange != null) {
                             setState(() {
-                              _startDateController.text = formattedDate;
+                              selectedDates = dateTimeRange;
                             });
-                          } else {
-                            print('Date is not Select');
                           }
                         },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 75,
-                      width: 135,
-                      child: TextField(
-                        controller: _endDateController,
-                        decoration: const InputDecoration(
-                          icon: Icon(FontAwesomeIcons.calendar),
-                          labelText: "End Date: ",
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2D3250),
                         ),
-                        readOnly: true,
-                        onTap: () async {
-                          _endDate = await pickDate();
-                          if (_endDate != null) {
-                            String formattedDate =
-                                DateFormat('dd/MM/yyyy').format(_endDate!);
-                            setState(() {
-                              _endDateController.text = formattedDate;
-                            });
-                          } else {
-                            print('Date is not Select');
-                          }
-                        },
+                        child: const Text(
+                          'Choose Date',
+                          style: TextStyle(color: Color(0xFFF9B17A)),
+                        ),
                       ),
                     ),
+                    Column(
+                      children: [
+                        Text(
+                          'Start date: ${DateFormat('dd/MM/yyy').format(selectedDates.start)}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          'End date: ${DateFormat('dd/MM/yyy').format(selectedDates.end)}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    )
                   ],
                 ),
+                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -290,11 +282,4 @@ class _CarInformationPage extends State<CarInformationPage> {
       ),
     );
   }
-
-  Future<DateTime?> pickDate() => showDatePicker(
-        context: context,
-        initialDate: DateTime.now().add(const Duration(days: 1)),
-        firstDate: DateTime.now().add(const Duration(days: 1)),
-        lastDate: DateTime(2100),
-      );
 }

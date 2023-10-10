@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:carrental_app/page/rent_complete_page.dart';
+import 'package:carrental_app/service/order_data.dart';
+import 'package:carrental_app/page/user/rent_complete_page.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -154,6 +155,7 @@ class _QRcodeAlert extends State<QRcodeAlert> {
                   ),
                 );
               } else {
+                OrderData.pushOrderData(widget.motorDetail, widget.daysRent, widget.priceRent);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
