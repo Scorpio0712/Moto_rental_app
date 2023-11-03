@@ -41,19 +41,19 @@ class UserHelper {
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     Map<String, dynamic> userData = {
-      "name": user!.displayName,
-      "email": user.email,
+      "name": user?.displayName,
+      "email": user?.email,
       "role": "user",
       "build_number": buildNumber,
     };
-    final userRef = _db.collection("users").doc(user.uid);
+    final userRef = _db.collection("users").doc(user?.uid);
     if ((await userRef.get()).exists) {
       await userRef.update({
-        "last_login": user.metadata.lastSignInTime?.millisecondsSinceEpoch,
+        "last_login": user?.metadata.lastSignInTime?.millisecondsSinceEpoch,
         "build_number": buildNumber,
       });
     } else {
-      await _db.collection("users").doc(user.uid).set(userData);
+      await _db.collection("users").doc(user?.uid).set(userData);
     }
   }
 }

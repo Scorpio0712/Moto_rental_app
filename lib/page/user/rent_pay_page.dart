@@ -6,10 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RentPayPage extends StatefulWidget {
+  static const String routeName = '/rent-pay';
   final String motorDetail;
   final int daysRent;
+  final String dateStartRent;
+  final String dateEndRent;
+
   const RentPayPage(
-      {Key? key, required this.motorDetail, required this.daysRent})
+      {Key? key,
+      required this.motorDetail,
+      required this.daysRent,
+      required this.dateStartRent,
+      required this.dateEndRent})
       : super(key: key);
 
   @override
@@ -229,11 +237,15 @@ class _RentPayPage extends State<RentPayPage> {
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
-                        builder: (context) => QRcodeAlert(motorDetail: _motorDetail, daysRent: widget.daysRent, priceRent: priceRent,),
+                        builder: (context) => QRcodeAlert(
+                            motorDetail: _motorDetail,
+                            daysRent: widget.daysRent,
+                            priceRent: priceRent,
+                            dateStartRent: widget.dateStartRent,
+                            dateEndRent: widget.dateEndRent),
                         context: context,
                         barrierDismissible: false);
                   }, // show dialog
-
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF9B17A),
                     shape: RoundedRectangleBorder(

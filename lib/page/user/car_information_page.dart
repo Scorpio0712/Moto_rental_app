@@ -1,10 +1,10 @@
 import 'package:carrental_app/page/user/rent_pay_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class CarInformationPage extends StatefulWidget {
+  static const String routeName = '/motor-information';
   final String motorSelected;
   const CarInformationPage({Key? key, required this.motorSelected})
       : super(key: key);
@@ -48,6 +48,8 @@ class _CarInformationPage extends State<CarInformationPage> {
         builder: (context) => RentPayPage(
           motorDetail: motorSelectedKey,
           daysRent: getSelectDateRange(),
+          dateStartRent: DateFormat('dd/MM/yyy').format(selectedDates.start),
+          dateEndRent: DateFormat('dd/MM/yyy').format(selectedDates.end),
         ),
       ),
     );

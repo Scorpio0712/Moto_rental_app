@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool loading = false;
   final user = FirebaseAuth.instance.currentUser;
   final List<String> _motor_DocsIds = [];
 
@@ -27,6 +28,24 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    setState(() {
+      loading = true;
+    });
+
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   void navigatorToMotorDetails(int index) {
@@ -61,60 +80,65 @@ class _HomePageState extends State<HomePage> {
       endDrawer: UserDrawer(
         onSignOut: signOut,
       ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          child: FutureBuilder(
-            future: _getMotorData(),
-            builder: (context, snapshot) {
-              return Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemCount: _motor_DocsIds.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => navigatorToMotorDetails(index),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        padding: const EdgeInsets.all(5.0),
-                        child: Card(
-                          color: Colors.white60,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 10,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const AspectRatio(
-                                aspectRatio: 15.0 / 11.0,
-                                // child: Image.asset(
-                                //   '',
-                                //   width: 100,
-                                //   height: 100,
-                                // ),
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                child: GetMotorData(
-                                  documentId: _motor_DocsIds[index],
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 10.0),
+                child: FutureBuilder(
+                  future: _getMotorData(),
+                  builder: (context, snapshot) {
+                    return Expanded(
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2),
+                        itemCount: _motor_DocsIds.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () => navigatorToMotorDetails(index),
+                            child: Container(
+                              height: MediaQuery.of(context).size.width * 0.6,
+                              padding: const EdgeInsets.all(5.0),
+                              child: Card(
+                                color: Colors.white60,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                elevation: 10,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const AspectRatio(
+                                      aspectRatio: 15.0 / 11.0,
+                                      // child: Image.asset(
+                                      //   '',
+                                      //   width: 100,
+                                      //   height: 100,
+                                      // ),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: GetMotorData(
+                                        documentId: _motor_DocsIds[index],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            
     );
   }
 }

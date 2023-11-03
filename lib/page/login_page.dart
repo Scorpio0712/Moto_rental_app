@@ -1,4 +1,4 @@
-import 'package:carrental_app/auth/auth_helper.dart';
+import '../auth/auth_helper.dart' show AuthHelper;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,119 +18,144 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPage extends State<LoginPage> {
+  bool loading = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
+  loadData() async {
+    setState(() {
+      loading = true;
+    });
+
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          color: const Color(0xFF2D3250),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(
-                height: 100,
-              ),
-              const Text(
-                "Logo",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              Container(
-                width: 325,
-                height: 525,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: const Color(0xFF2D3250),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: <Widget>[
-                        buildTextFieldEmail(),
-                        buildTextFieldPassword(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                child: const Text(
-                                  "Forgot password?",
-                                  style: TextStyle(
-                                    color: Color(0xFF000AFF),
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) {
-                                      return const ForgotPasswordPage();
-                                    }),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        buildButtonSignIn(),
-                      ],
-                    ),
+                  children: <Widget>[
                     const SizedBox(
-                      height: 10,
+                      height: 100,
                     ),
                     const Text(
-                      "Or Log in using",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      "Logo",
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 50,
                     ),
-                    buildButtonGoogle(),
-                    const SizedBox(
-                      height: 80,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    Container(
+                      width: 325,
+                      height: 525,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          const Text("Don't have an account?"),
-                          GestureDetector(
-                            onTap: widget.showRegisterPage,
-                            child: const Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                color: Color(0xFF000AFF),
+                          Column(
+                            children: <Widget>[
+                              buildTextFieldEmail(),
+                              buildTextFieldPassword(),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 25.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      child: const Text(
+                                        "Forgot password?",
+                                        style: TextStyle(
+                                          color: Color(0xFF000AFF),
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return const ForgotPasswordPage();
+                                          }),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              buildButtonSignIn(),
+                            ],
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            "Or Log in using",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          buildButtonGoogle(),
+                          const SizedBox(
+                            height: 80,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("Don't have an account?"),
+                                GestureDetector(
+                                  onTap: widget.showRegisterPage,
+                                  child: const Text(
+                                    "Sign Up",
+                                    style: TextStyle(
+                                      color: Color(0xFF000AFF),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -229,7 +254,8 @@ class _LoginPage extends State<LoginPage> {
   Future signIn() async {
     try {
       final user = await AuthHelper.signInWithEmail(
-          email: _emailController.text, password: _passwordController.text);
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text(

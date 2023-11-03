@@ -1,55 +1,53 @@
 import 'dart:io';
 import 'package:carrental_app/service/order_data.dart';
 import 'package:carrental_app/page/user/rent_complete_page.dart';
-import 'package:path/path.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class QRcodeAlert extends StatefulWidget {
   final String motorDetail;
   final int daysRent;
   final int priceRent;
-  const QRcodeAlert({Key? key, required this.motorDetail, required this.daysRent, required this.priceRent}) : super(key: key);
+  final String dateStartRent;
+  final String dateEndRent;
+
+  const QRcodeAlert(
+      {Key? key,
+      required this.motorDetail,
+      required this.daysRent,
+      required this.priceRent,
+      required this.dateStartRent,
+      required this.dateEndRent})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QRcodeAlert();
 }
 
 class _QRcodeAlert extends State<QRcodeAlert> {
-  firebase_storage.FirebaseStorage storage =
-      firebase_storage.FirebaseStorage.instance;
-  File? _photo;
-  final ImagePicker _picker = ImagePicker();
-  late final String fileName;
+  PlatformFile? pickFiles;
+  UploadTask? uploadTask;
 
   Future selectFile() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
     setState(() {
-      if (pickedFile != null) {
-        _photo = File(pickedFile.path);
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
+      pickFiles = result.files.first;
     });
   }
 
   Future uploadFile() async {
-    if (_photo == null) return;
-    fileName = basename(_photo!.path);
-    final destination = 'files/$fileName';
+    final path = 'slips/${pickFiles!.name}';
+    final file = File(pickFiles!.path!);
 
-    try {
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref(destination)
-          .child('files/');
-      await ref.putFile(_photo!);
-    } catch (e) {
-      print('Error occurred!');
-    }
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    print('Download link: $urlDownload');
   }
 
   @override
@@ -62,7 +60,7 @@ class _QRcodeAlert extends State<QRcodeAlert> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('data'),
+            const Text('data'),
             SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
@@ -116,9 +114,9 @@ class _QRcodeAlert extends State<QRcodeAlert> {
                         onPressed: selectFile,
                         child: const Text('Choose file'),
                       ),
-                      if (_photo != null)
+                      if (pickFiles != null)
                         Expanded(
-                          child: Text(fileName),
+                          child: Text(pickFiles!.name),
                         )
                     ],
                   )
@@ -130,7 +128,7 @@ class _QRcodeAlert extends State<QRcodeAlert> {
         actions: <Widget>[
           ElevatedButton(
             onPressed: () {
-              if (_photo == null) {
+              if (pickFiles == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text(
@@ -155,11 +153,22 @@ class _QRcodeAlert extends State<QRcodeAlert> {
                   ),
                 );
               } else {
-                OrderData.pushOrderData(widget.motorDetail, widget.daysRent, widget.priceRent);
+                uploadFile();
+                OrderData.pushOrderData(
+                    widget.motorDetail,
+                    widget.daysRent,
+                    widget.priceRent,
+                    widget.dateEndRent,
+                    widget.dateStartRent,
+                    pickFiles!.name);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RentComPage(motorDetail: widget.motorDetail, daysRent: widget.daysRent, priceRent: widget.priceRent,),
+                    builder: (context) => RentComPage(
+                      motorDetail: widget.motorDetail,
+                      daysRent: widget.daysRent,
+                      priceRent: widget.priceRent,
+                    ),
                   ),
                 );
               }

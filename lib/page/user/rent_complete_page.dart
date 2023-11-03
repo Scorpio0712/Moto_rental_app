@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class RentComPage extends StatefulWidget {
+  static const String routeName = '/rent-complete';
   final String motorDetail;
   final int daysRent;
   final int priceRent;
