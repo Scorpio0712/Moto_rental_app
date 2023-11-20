@@ -241,23 +241,10 @@ class _RegisterPage extends State<RegisterPage> {
 
   Future signUp() async {
     if (passwordConfirm()) {
-      final user = await AuthHelper.signUpWithEmail(
+      await AuthHelper.signUpWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // addUserDetails(
-      //   _nameController.text,
-      //   _emailController.text,
-      //   _phoneNumberController.text,
-      // );
     }
   }
-
-  // Future addUserDetails(String name, String email, String phoneNumber) async {
-  //   await FirebaseFirestore.instance.collection('users').add({
-  //     'name': name,
-  //     'email': email,
-  //     'phoneNumber': phoneNumber,
-  //   });
-  // }
 }

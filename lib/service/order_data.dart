@@ -9,7 +9,6 @@ class OrderData {
     var motorColor;
     var nameUser;
     var emailUser;
-    final userAuth = FirebaseAuth.instance.currentUser;
 
     await FirebaseFirestore.instance
         .collection('motor')
@@ -20,6 +19,8 @@ class OrderData {
       motorModel = ds['model'];
       motorColor = ds['color'];
     });
+
+    final userAuth = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userAuth?.uid)
@@ -32,7 +33,7 @@ class OrderData {
     final int totalPrice = priceRent * daysRent;
 
     Map<String, dynamic> orderData = {
-      "orderStatus" : 'process',
+      "orderStatus": 'process',
       "nameUser": nameUser,
       "emailUser": emailUser,
       "brandMotor": motorBrand,

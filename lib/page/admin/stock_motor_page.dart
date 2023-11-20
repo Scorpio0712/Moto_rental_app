@@ -1,5 +1,6 @@
+import 'package:carrental_app/page/admin/add_motor_page.dart';
 import 'package:carrental_app/page/admin/admin_home_page.dart';
-import 'package:carrental_app/page/user/home_page.dart';
+
 import 'package:carrental_app/service/get_stock_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,12 @@ class _StockMotorPageState extends State<StockMotorPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              // do something
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddMotorPage(),
+                ),
+              );
             },
           )
         ],
@@ -99,43 +105,51 @@ class _StockMotorPageState extends State<StockMotorPage> {
                         child: FutureBuilder(
                           future: getStockDataList(),
                           builder: (context, snapshot) {
-                            return Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                itemCount: motorDocsIds.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.25,
-                                      padding: const EdgeInsets.all(5),
-                                      child: Card(
-                                        color: Colors.white60,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        elevation: 10,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Container(
-                                              padding: const EdgeInsets.all(15),
-                                              child: GetStockData(
-                                                documentId: motorDocsIds[index],
+                            return loading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: motorDocsIds.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            padding: const EdgeInsets.all(5),
+                                            child: Card(
+                                              color: Colors.white60,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              elevation: 10,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            15),
+                                                    child: GetStockData(
+                                                      documentId:
+                                                          motorDocsIds[index],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   );
-                                },
-                              ),
-                            );
                           },
                         ),
                       ),

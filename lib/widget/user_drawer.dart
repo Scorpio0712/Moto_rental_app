@@ -1,3 +1,4 @@
+import 'package:carrental_app/page/user/my_order_page.dart';
 import 'package:carrental_app/widget/user_list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -23,9 +24,14 @@ class UserDrawer extends StatelessWidget {
             onTap: () => Navigator.pop(context),
           ),
           UserListTile(
-            icon: Icons.settings,
-            text: 'Setting',
-            onTap: () => Navigator,
+            icon: Icons.list,
+            text: 'My Order',
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyOrderPage(),
+                ),
+              ),
           ),
           UserListTile(
             icon: Icons.logout,

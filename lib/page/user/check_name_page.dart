@@ -1,5 +1,5 @@
 import 'package:carrental_app/auth/main_check.dart';
-import 'package:carrental_app/page/user/home_page.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +17,6 @@ class _CheckNameUserPageState extends State<CheckNameUserPage> {
   bool loading = false;
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-
-  // @override
-  // void dispose() {
-  //   _nameController.dispose();
-  //   _phoneNumberController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   void initState() {
