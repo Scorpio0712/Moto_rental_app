@@ -61,32 +61,41 @@ class _HomePageState extends State<HomePage> {
 
   void signOut() {
     FirebaseAuth.instance.signOut();
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/main-page', ModalRoute.withName('/'));
+  }
+
+  Future<void> refreshCallback() async {
+    return await Future.delayed(const Duration(seconds: 2));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0xFF2D3250),
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Motor Rental',
-          style: TextStyle(
-            color: Color(0xffffb17a),
-          ),
-        ),
-      ),
-      endDrawer: UserDrawer(
-        onSignOut: signOut,
-      ),
-      body: loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Container(
+    return loading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.white),
+              backgroundColor: const Color(0xFF2D3250),
+              automaticallyImplyLeading: false,
+              title: const Text(
+                'Motor Rental',
+                style: TextStyle(
+                  color: Color(0xffffb17a),
+                ),
+              ),
+            ),
+            endDrawer: UserDrawer(onSignOut: signOut),
+            body: RefreshIndicator(
+              onRefresh: refreshCallback,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0, vertical: 10.0),
+                  horizontal: 10.0,
+                  vertical: 10.0,
+                ),
                 child: FutureBuilder(
                   future: _getMotorData(),
                   builder: (context, snapshot) {
@@ -101,35 +110,8 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () => navigatorToMotorDetails(index),
-                            child: Container(
-                              height: MediaQuery.of(context).size.width * 0.6,
-                              padding: const EdgeInsets.all(5.0),
-                              child: Card(
-                                color: Colors.white60,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                elevation: 10,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    const AspectRatio(
-                                      aspectRatio: 15.0 / 11.0,
-                                      // child: Image.asset(
-                                      //   '',
-                                      //   width: 100,
-                                      //   height: 100,
-                                      // ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      child: GetMotorData(
-                                        documentId: _motor_DocsIds[index],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: GetMotorData(
+                              documentId: _motor_DocsIds[index],
                             ),
                           );
                         },
@@ -138,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-            
-    );
+            ),
+          );
   }
 }

@@ -1,10 +1,11 @@
-import 'package:carrental_app/page/user/home_page.dart';
+import 'package:carrental_app/page/user/myorder_information_page.dart';
 import 'package:carrental_app/service/get_myorder_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyOrderPage extends StatefulWidget {
+  static const String routeName = '/my-order';
   const MyOrderPage({super.key});
 
   @override
@@ -52,33 +53,30 @@ class _MyOrderPageState extends State<MyOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0xFF2D3250),
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
+    return loading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.white),
+              backgroundColor: const Color(0xFF2D3250),
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () async {
+                  await Navigator.pushReplacementNamed(context, '/home-page');
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              title: const Text(
+                'My Order',
+                style: TextStyle(
+                  color: Color(0xffffb17a),
+                ),
+              ),
+              centerTitle: true,
             ),
-          ),
-          icon: const Icon(Icons.home),
-        ),
-        title: const Text(
-          'My Order',
-          style: TextStyle(
-            color: Color(0xffffb17a),
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
+            body: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
@@ -101,7 +99,18 @@ class _MyOrderPageState extends State<MyOrderPage> {
                                 itemCount: orderDocsIds.length,
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              MyOrderInformationPage(
+                                            myOrderSelected:
+                                                orderDocsIds[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Container(
                                       height:
                                           MediaQuery.of(context).size.width *
@@ -140,6 +149,6 @@ class _MyOrderPageState extends State<MyOrderPage> {
                 )
               ],
             ),
-    );
+          );
   }
 }

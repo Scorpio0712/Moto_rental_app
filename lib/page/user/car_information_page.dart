@@ -1,5 +1,6 @@
 import 'package:carrental_app/page/user/rent_pay_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,6 +15,9 @@ class CarInformationPage extends StatefulWidget {
 }
 
 class _CarInformationPage extends State<CarInformationPage> {
+  var imageUrl;
+  var imageName;
+  final storage = FirebaseStorage.instance;
   late dynamic motorSelectedKey = widget.motorSelected;
   DateTimeRange selectedDates = DateTimeRange(
     start: DateTime.now(),
@@ -39,6 +43,33 @@ class _CarInformationPage extends State<CarInformationPage> {
     } else {
       return 0;
     }
+  }
+
+  Future getData() async {
+    try {
+      await getImageUrl();
+      return imageUrl;
+    } catch (e) {
+      debugPrint("Error - $e");
+      return null;
+    }
+  }
+
+  Future<void> getImageUrl() async {
+    await FirebaseFirestore.instance
+        .collection('motor')
+        .doc(widget.motorSelected)
+        .get()
+        .then((DocumentSnapshot ds) async {
+      imageName = ds['picMotor'];
+    });
+
+    final path = 'motor/$imageName';
+    final ref = storage.ref().child(path);
+    final url = await ref.getDownloadURL();
+
+    imageUrl = url;
+    debugPrint(imageUrl.toString());
   }
 
   void navigatorToMotorDetails() {
@@ -79,8 +110,9 @@ class _CarInformationPage extends State<CarInformationPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  height: 375,
+                  height: MediaQuery.of(context).size.height*0.5,
                   width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(bottom: 10),
                   decoration: const BoxDecoration(
                     color: Color(0xFF2D3250),
                     borderRadius: BorderRadius.vertical(
@@ -110,13 +142,32 @@ class _CarInformationPage extends State<CarInformationPage> {
                           },
                         ),
                       ),
-                      const Image(
-                        image: AssetImage('assets/2.png'),
-                        width: 350,
+                      FutureBuilder(
+                        future: getData(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Error');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height*0.35,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Image.network(
+                                  snapshot.data.toString(),
+                                  width: 200,
+                                ),
+                              ),
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const Spacer(),
                       GestureDetector(
                         child: FutureBuilder<DocumentSnapshot>(
                           future: _motor.get(),

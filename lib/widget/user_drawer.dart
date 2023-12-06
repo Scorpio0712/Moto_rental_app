@@ -1,10 +1,16 @@
+
 import 'package:carrental_app/page/user/my_order_page.dart';
 import 'package:carrental_app/widget/user_list_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserDrawer extends StatelessWidget {
   final void Function()? onSignOut;
   const UserDrawer({super.key, required this.onSignOut});
+
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +33,11 @@ class UserDrawer extends StatelessWidget {
             icon: Icons.list,
             text: 'My Order',
             onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MyOrderPage(),
-                ),
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MyOrderPage(),
               ),
+            ),
           ),
           UserListTile(
             icon: Icons.logout,

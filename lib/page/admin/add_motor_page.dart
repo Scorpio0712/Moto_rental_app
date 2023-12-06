@@ -1,13 +1,11 @@
 import 'dart:io';
-
-import 'package:carrental_app/page/admin/admin_home_page.dart';
-import 'package:carrental_app/page/admin/stock_motor_page.dart';
 import 'package:carrental_app/service/add_motor_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class AddMotorPage extends StatefulWidget {
+  static const String routeName = '/add-motor';
   const AddMotorPage({Key? key}) : super(key: key);
 
   @override
@@ -60,38 +58,35 @@ class _AddMotorPageState extends State<AddMotorPage> {
     final snapshot = await uploadTask!.whenComplete(() {});
 
     final urlDownload = await snapshot.ref.getDownloadURL();
-    print('Download link: $urlDownload');
+    debugPrint('Download link: $urlDownload');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AdminHomePage(),
+    return loading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.white),
+              backgroundColor: const Color(0xffffb17a),
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () async {
+                  await Navigator.popAndPushNamed(context, '/stock-motor');
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              title: const Text(
+                'Add motor',
+                style: TextStyle(
+                  color: Color(0xFF2D3250),
+                ),
+              ),
+              centerTitle: true,
             ),
-          ),
-          icon: const Icon(Icons.cancel),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0xffffb17a),
-        title: const Text(
-          'Add motor',
-          style: TextStyle(
-            color: Color(0xFF2D3250),
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
+            body: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -153,7 +148,7 @@ class _AddMotorPageState extends State<AddMotorPage> {
                 ],
               ),
             ),
-    );
+          );
   }
 
   Widget buildTextFieldBrand() {
@@ -257,6 +252,7 @@ class _AddMotorPageState extends State<AddMotorPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextField(
         controller: _amountController,
+        keyboardType: TextInputType.number,
         decoration: const InputDecoration(
           filled: true,
           fillColor: Colors.white,
@@ -299,20 +295,48 @@ class _AddMotorPageState extends State<AddMotorPage> {
         backgroundColor: const Color(0xFF2D3250),
       ),
       onPressed: () {
-        uploadFile();
-        AddMotorData.saveAddMotorData(
-            brand: _brandController.text.trim(),
-            model: _modelController.text.trim(),
-            eCapacity: _ecapacityController.text.trim(),
-            color: _colorController.text.trim(),
-            amount: _amountController.text.trim(),
-            picMotor: selectImage!.name);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const StockMotorPage(),
-          ),
-        );
+        if (selectImage == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text(
+              'Please Choose Photo',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(milliseconds: 1500),
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ));
+        } else {
+          uploadFile();
+          AddMotorData.saveAddMotorData(
+              brand: _brandController.text.trim(),
+              model: _modelController.text.trim(),
+              eCapacity: _ecapacityController.text.trim(),
+              color: _colorController.text.trim(),
+              amount: _amountController.text.trim(),
+              picMotor: selectImage!.name);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text(
+              'Success',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(milliseconds: 1500),
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ));
+          Navigator.pushNamed(context, '/stock-motor');
+        }
       },
       child: const Text(
         'Confirm',

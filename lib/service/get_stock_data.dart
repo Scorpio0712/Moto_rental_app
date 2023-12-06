@@ -14,7 +14,7 @@ class GetStockData extends StatelessWidget {
       future: motorData.doc(documentId).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data =
+          Map<String, dynamic>? data =
               snapshot.data!.data() as Map<String, dynamic>;
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

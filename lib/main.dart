@@ -1,8 +1,7 @@
-import 'package:carrental_app/auth/main_check.dart';
 import 'package:carrental_app/router.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      initialRoute: "/",
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: const MainPage(),
     );
   }
 }

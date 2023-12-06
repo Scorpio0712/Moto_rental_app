@@ -92,14 +92,14 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
   Widget buildButtonResetPass() {
     return InkWell(
       child: Container(
-        constraints: BoxConstraints.expand(height: 50, width: 200),
-        child: Text("Reset Password",
+        constraints: const BoxConstraints.expand(height: 50, width: 200),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25), color: const Color(0xFF2D3250)),
+        margin: const EdgeInsets.only(top: 14),
+        padding: const EdgeInsets.all(12),
+        child: const Text("Reset Password",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, color: Colors.white)),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25), color: Color(0xFF2D3250)),
-        margin: EdgeInsets.only(top: 14),
-        padding: EdgeInsets.all(12),
       ),
       onTap: () {
         resetPassword();
@@ -117,11 +117,11 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
               hintText: "Email",
               filled: true,
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
+                borderSide: const BorderSide(color: Colors.white),
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffffb17a)),
+                borderSide: const BorderSide(color: Color(0xffffb17a)),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -162,13 +162,13 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print(e.code);
+        debugPrint(e.code);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
+            content: const Text(
               'User not found',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.red,
             duration: const Duration(milliseconds: 1500),

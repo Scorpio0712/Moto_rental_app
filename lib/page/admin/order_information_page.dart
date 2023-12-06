@@ -1,10 +1,12 @@
 import 'package:carrental_app/page/admin/admin_home_page.dart';
 import 'package:carrental_app/widget/slip_alert.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flutter/material.dart';
 
 class OrderInformationPage extends StatefulWidget {
+  static const String routeName = '/order-information';
   final String orderSelected;
 
   const OrderInformationPage({
@@ -20,6 +22,9 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
   bool processState = false;
   bool successState = false;
   bool problemState = false;
+  var imageUrl;
+  var imageName;
+  final storage = FirebaseStorage.instance;
   var orderStatus;
   bool loading = false;
   late final orderSelected =
@@ -44,7 +49,6 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
     }
   }
 
-
   changeStatus() async {
     await FirebaseFirestore.instance
         .collection('orders')
@@ -55,7 +59,7 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
     });
 
     debugPrint(orderStatus);
-    
+
     if (orderStatus == 'process') {
       setState(() {
         processState = true;
@@ -71,30 +75,58 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
     }
   }
 
+  Future getData() async {
+    try {
+      await getImageUrl();
+      return imageUrl;
+    } catch (e) {
+      debugPrint("Error - $e");
+      return null;
+    }
+  }
+
+  Future<void> getImageUrl() async {
+    await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(widget.orderSelected)
+        .get()
+        .then((DocumentSnapshot ds) async {
+      imageName = ds['picMotor'];
+    });
+
+    final path = 'motor/$imageName';
+    final ref = storage.ref().child(path);
+    final url = await ref.getDownloadURL();
+
+    imageUrl = url;
+    debugPrint(imageUrl.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xffffb17a),
-        title: const Text(
-          'Order Information',
-          style: TextStyle(
-            color: Color(0xFF2D3250),
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
+    return loading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.white),
+              automaticallyImplyLeading: false,
+              backgroundColor: const Color(0xffffb17a),
+              title: const Text(
+                'Order Information',
+                style: TextStyle(
+                  color: Color(0xFF2D3250),
+                ),
+              ),
+              centerTitle: true,
+            ),
+            body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                    padding: const EdgeInsets.only(bottom: 10),
+                    height: MediaQuery.of(context).size.height * 0.5,
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
                       color: Color(0xffffb17a),
@@ -104,10 +136,31 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
                     ),
                     child: Column(
                       children: [
-                        const Image(
-                          image: AssetImage('assets/2.png'),
-                          width: 200,
-                        ),
+                        FutureBuilder(
+                            future: getData(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return const Text('Error');
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.25,
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Image.network(
+                                      snapshot.data.toString(),
+                                      width: 175,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }),
                         GestureDetector(
                           child: FutureBuilder<DocumentSnapshot>(
                             future: orderSelected.get(),
@@ -127,7 +180,7 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        const Spacer(),
                         GestureDetector(
                           child: FutureBuilder<DocumentSnapshot>(
                             future: orderSelected.get(),
@@ -207,140 +260,184 @@ class _OrderInformationPageState extends State<OrderInformationPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Column(
-                    children: [
-                      const Text(
-                        'Slip Payment',
-                        style:
-                            TextStyle(color: Color(0xff252525), fontSize: 16),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                              builder: (context) => SlipAlert(
-                                    orderSelected: widget.orderSelected,
+                  const SizedBox(height: 5),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.37,
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Slip Payment',
+                          style:
+                              TextStyle(color: Color(0xff252525), fontSize: 16),
+                        ),
+                        const SizedBox(height: 5),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                builder: (context) => SlipAlert(
+                                      orderSelected: widget.orderSelected,
+                                    ),
+                                context: context,
+                                barrierDismissible: false);
+                          }, // show dialog
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF9B17A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          child: const Text(
+                            'See Slip',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Status',
+                          style:
+                              TextStyle(color: Color(0xff252525), fontSize: 16),
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: const Color(0xFFF9B17A),
                                   ),
-                              context: context,
-                              barrierDismissible: false);
-                        }, // show dialog
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF9B17A),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        child: const Text(
-                          'See Slip',
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Status',
-                        style:
-                            TextStyle(color: Color(0xff252525), fontSize: 16),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: const Color(0xFFF9B17A),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'Process',
-                                  style: TextStyle(
-                                      color: Color(0xff252525), fontSize: 16),
+                                  child: Row(
+                                    children: [
+                                      const Text(
+                                        'Process',
+                                        style: TextStyle(
+                                            color: Color(0xff252525),
+                                            fontSize: 16),
+                                      ),
+                                      Checkbox(
+                                        activeColor: const Color(0xFF2D3250),
+                                        checkColor: Colors.white,
+                                        value: processState,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            processState = value!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Checkbox(
-                                  activeColor: const Color(0xFF2D3250),
-                                  checkColor: Colors.white,
-                                  value: processState,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      processState = value!;
-                                    });
-                                  },
+                                Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: const Color(0xFFF9B17A),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Text(
+                                        'Success',
+                                        style: TextStyle(
+                                            color: Color(0xff252525),
+                                            fontSize: 16),
+                                      ),
+                                      Checkbox(
+                                        activeColor: const Color(0xFF2D3250),
+                                        checkColor: Colors.white,
+                                        value: successState,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            successState = value!;
+                                          });
+                                        },
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: const Color(0xFFF9B17A),
+                            const SizedBox(height: 10),
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                              width: MediaQuery.of(context).size.width * 0.34,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color(0xFFF9B17A),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Problem',
+                                    style: TextStyle(
+                                        color: Color(0xff252525), fontSize: 16),
+                                  ),
+                                  Checkbox(
+                                    activeColor: const Color(0xFF2D3250),
+                                    checkColor: Colors.white,
+                                    value: problemState,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        problemState = value!;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'Success',
-                                  style: TextStyle(
-                                      color: Color(0xff252525), fontSize: 16),
-                                ),
-                                Checkbox(
-                                  activeColor: const Color(0xFF2D3250),
-                                  checkColor: Colors.white,
-                                  value: successState,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      successState = value!;
-                                    });
-                                  },
-                                )
-                              ],
+                          ],
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            OrderStatus.updateStatus(
+                                widget.orderSelected,
+                                orderStatus,
+                                processState,
+                                successState,
+                                problemState);
+                            Navigator.pushNamed(context, '/admin-home');
+                          }, // show dialog
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF9B17A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          OrderStatus.updateStatus(widget.orderSelected,
-                              orderStatus, processState, successState);
-                          showDialog(
-                            builder: (context) => const AdminHomePage(),
-                            context: context,
-                          );
-                        }, // show dialog
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF9B17A),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const Text(
+                            'Confirm',
                           ),
-                          textStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
                         ),
-                        child: const Text(
-                          'Confirm',
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-    );
+          );
   }
 }
 
 class OrderStatus {
-  static updateStatus(
-      orderSelected, orderStatus, processState, successState) async {
+  static updateStatus(orderSelected, orderStatus, processState, successState,
+      problemState) async {
     if (processState == true) {
       orderStatus = 'process';
     } else if (successState == true) {
       orderStatus = 'success';
+    } else {
+      orderStatus = 'problem';
     }
 
     await FirebaseFirestore.instance

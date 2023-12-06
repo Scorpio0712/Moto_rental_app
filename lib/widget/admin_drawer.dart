@@ -1,4 +1,4 @@
-import 'package:carrental_app/page/admin/stock_motor_page.dart';
+
 import 'package:carrental_app/widget/admin_list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -26,10 +26,7 @@ class AdminDrawer extends StatelessWidget {
           AdminListTile(
             icon: Icons.motorcycle,
             text: 'Stock motorcycle',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const StockMotorPage()),
-            ),
+            onTap: () =>  Navigator.pushNamed(context, '/stock-motor'),
           ),
           AdminListTile(
             icon: Icons.logout,

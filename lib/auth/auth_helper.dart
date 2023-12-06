@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
 
 class AuthHelper {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -37,20 +37,15 @@ class UserHelper {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   static saveUser(User? user) async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    int buildNumber = int.parse(packageInfo.buildNumber);
-
     Map<String, dynamic> userData = {
       "name": user?.displayName,
       "email": user?.email,
       "role": "user",
-      "build_number": buildNumber,
     };
     final userRef = _db.collection("users").doc(user?.uid);
     if ((await userRef.get()).exists) {
       await userRef.update({
         "last_login": user?.metadata.lastSignInTime?.millisecondsSinceEpoch,
-        "build_number": buildNumber,
       });
     } else {
       await _db.collection("users").doc(user?.uid).set(userData);

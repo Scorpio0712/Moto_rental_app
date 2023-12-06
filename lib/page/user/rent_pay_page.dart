@@ -1,8 +1,7 @@
 import 'package:carrental_app/widget/qr_code.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RentPayPage extends StatefulWidget {
@@ -29,6 +28,9 @@ const List<String> list = <String>[
 ];
 
 class _RentPayPage extends State<RentPayPage> {
+  var imageUrl;
+  var imageName;
+  final storage = FirebaseStorage.instance;
   late final dynamic _motorDetail = widget.motorDetail;
   late final int priceRent;
   late final _motor =
@@ -52,6 +54,33 @@ class _RentPayPage extends State<RentPayPage> {
     return totalPrice;
   }
 
+  Future getData() async {
+    try {
+      await getImageUrl();
+      return imageUrl;
+    } catch (e) {
+      debugPrint("Error - $e");
+      return null;
+    }
+  }
+
+  Future<void> getImageUrl() async {
+    await FirebaseFirestore.instance
+        .collection('motor')
+        .doc(_motorDetail)
+        .get()
+        .then((DocumentSnapshot ds) async {
+      imageName = ds['picMotor'];
+    });
+
+    final path = 'motor/$imageName';
+    final ref = storage.ref().child(path);
+    final url = await ref.getDownloadURL();
+
+    imageUrl = url;
+    debugPrint(imageUrl.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +88,7 @@ class _RentPayPage extends State<RentPayPage> {
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xFF2D3250),
         title: const Text(
-          'Topic',
+          'Payment',
           style: TextStyle(
             color: Color(0xFFF9B17A),
             fontSize: 20,
@@ -75,8 +104,8 @@ class _RentPayPage extends State<RentPayPage> {
             Column(
               children: [
                 Container(
-                  height: 250,
-                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(bottom: 10),
+                  height: MediaQuery.of(context).size.height * 0.45,
                   decoration: const BoxDecoration(
                     color: Color(0xFF2D3250),
                     borderRadius: BorderRadius.vertical(
@@ -85,37 +114,58 @@ class _RentPayPage extends State<RentPayPage> {
                   ),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          const Image(
-                            image: AssetImage('assets/2.png'),
-                            width: 125,
-                          ),
-                          GestureDetector(
-                            child: FutureBuilder<DocumentSnapshot>(
-                              future: _motor.get(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  Map<String, dynamic> data = snapshot.data!
-                                      .data() as Map<String, dynamic>;
-                                  return Text(
-                                    data['brand'] + ' ' + data['model'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFF9B17A),
-                                      fontSize: 18,
-                                    ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height*0.3,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              FutureBuilder(
+                                future: getData(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return const Text('Error');
+                                  }
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return Image.network(
+                                      snapshot.data.toString(),
+                                      width: 150,
+                                    );
+                                  }
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
                                   );
-                                }
-                                return const Text('Loading...');
-                              },
-                            ),
+                                },
+                              ),
+                              GestureDetector(
+                                child: FutureBuilder<DocumentSnapshot>(
+                                  future: _motor.get(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      Map<String, dynamic> data = snapshot.data!
+                                          .data() as Map<String, dynamic>;
+                                      return Text(
+                                        data['brand'] + ' ' + data['model'],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFFF9B17A),
+                                          fontSize: 18,
+                                        ),
+                                      );
+                                    }
+                                    return const Text('Loading...');
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 50),
+                      const Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -187,79 +237,85 @@ class _RentPayPage extends State<RentPayPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 40,
-                    ),
-                    const Text(
-                      'Payment:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                      width: 25,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: DropdownButton<String>(
-                        value: dropdownValue,
-                        icon: const Icon(FontAwesomeIcons.arrowDown,
-                            color: Colors.black),
-                        elevation: 16,
-                        style: const TextStyle(
-                          color: Color(0xFF2D3250),
-                          fontSize: 20,
-                        ),
-                        isExpanded: true,
-                        underline: Container(
-                            height: 2, color: const Color(0xFF2D3250)),
-                        onChanged: (String? value) {
-                          setState(() {
-                            dropdownValue = value!;
-                          });
-                        },
-                        items:
-                            list.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 30,
+                          ),
+                          const Text(
+                            'Payment:',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                            width: 25,
+                          ),
+                          SizedBox(
+                            width: 180,
+                            child: DropdownButton<String>(
+                              value: dropdownValue,
+                              icon: const Icon(FontAwesomeIcons.arrowDown,
+                                  color: Colors.black),
+                              elevation: 16,
+                              style: const TextStyle(
+                                color: Color(0xFF2D3250),
+                                fontSize: 20,
+                              ),
+                              isExpanded: true,
+                              underline: Container(
+                                  height: 2, color: const Color(0xFF2D3250)),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  dropdownValue = value!;
+                                });
+                              },
+                              items: list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                        builder: (context) => QRcodeAlert(
-                            motorDetail: _motorDetail,
-                            daysRent: widget.daysRent,
-                            priceRent: priceRent,
-                            dateStartRent: widget.dateStartRent,
-                            dateEndRent: widget.dateEndRent),
-                        context: context,
-                        barrierDismissible: false);
-                  }, // show dialog
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF9B17A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                              builder: (context) => QRcodeAlert(
+                                  motorDetail: _motorDetail,
+                                  daysRent: widget.daysRent,
+                                  priceRent: priceRent,
+                                  dateStartRent: widget.dateStartRent,
+                                  dateEndRent: widget.dateEndRent),
+                              context: context,
+                              barrierDismissible: false);
+                        }, // show dialog
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF9B17A),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        child: const Text(
+                          'Pay now',
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'Pay now',
-                  ),
-                ),
+                )
               ],
             ),
           ],

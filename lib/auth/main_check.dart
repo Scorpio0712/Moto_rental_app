@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MainPage extends StatelessWidget {
+  static const String routeName = '/main-page';
   const MainPage({Key? key}) : super(key: key);
 
   @override
@@ -45,8 +46,9 @@ class MainPage extends StatelessWidget {
               }
             },
           );
+        } else {
+          return const AuthPage();
         }
-        return const AuthPage();
       },
     );
   }

@@ -49,6 +49,7 @@ class _CheckNameUserPageState extends State<CheckNameUserPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
+                    padding: const EdgeInsets.all(10),
                     height: MediaQuery.of(context).size.height * 0.6,
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
@@ -59,12 +60,19 @@ class _CheckNameUserPageState extends State<CheckNameUserPage> {
                     ),
                     child: Column(
                       children: [
-                        const Text('Hello'),
-                        const SizedBox(height: 10),
+                        const Text(
+                          'Please input name and phone number',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xffffb17a),
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
                         buildTextFieldName(),
                         const SizedBox(height: 10),
                         buildTextFieldPhoneNumber(),
-                        const SizedBox(height: 10),
+                        const Spacer(),
                         buildButtonConfirm(),
                       ],
                     ),
@@ -149,29 +157,6 @@ class _CheckNameUserPageState extends State<CheckNameUserPage> {
       'name': _nameController.text.trim(),
       'phoneNumber': _phoneNumberController.text.trim(),
     });
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: const Text(
-    //       'Sign up user successful.',
-    //       textAlign: TextAlign.center,
-    //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    //     ),
-    //     backgroundColor: Colors.green,
-    //     duration: const Duration(milliseconds: 1500),
-    //     width: MediaQuery.of(context).size.width,
-    //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    //     behavior: SnackBarBehavior.floating,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(10.0),
-    //     ),
-    //   ),
-    // );
-    // ignore: use_build_context_synchronously
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const MainPage()),
-    // );
     const MainPage();
   }
 }

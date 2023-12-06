@@ -1,5 +1,9 @@
+
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class OrderData {
   static pushOrderData(motorDetail, int daysRent, int priceRent, dateStartRent,
@@ -9,6 +13,8 @@ class OrderData {
     var motorColor;
     var nameUser;
     var emailUser;
+    var motorAmount;
+    var motorPic;
 
     await FirebaseFirestore.instance
         .collection('motor')
@@ -18,6 +24,9 @@ class OrderData {
       motorBrand = ds['brand'];
       motorModel = ds['model'];
       motorColor = ds['color'];
+      motorAmount = ds['amount'];
+      motorPic = ds['picMotor'];
+
     });
 
     final userAuth = FirebaseAuth.instance.currentUser;
@@ -45,8 +54,23 @@ class OrderData {
       "dateStartRent": dateStartRent,
       "dateEndRent": dateEndRent,
       "slipPayment": fileName,
+      "picMotor": motorPic,
     };
 
     await FirebaseFirestore.instance.collection("orders").add(orderData);
+
+    motorAmount = motorAmount - 1;
+    FirebaseFirestore.instance
+        .collection('motor')
+        .doc(motorDetail)
+        .update({'amount': motorAmount});
+
+    if (motorAmount < 1) {
+      await FirebaseFirestore.instance
+          .collection('motor')
+          .doc(motorDetail)
+          .delete();
+      debugPrint('Delete $motorDetail completed');
+    }
   }
 }

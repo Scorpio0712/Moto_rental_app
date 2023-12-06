@@ -17,33 +17,97 @@ class GetMyOrderData extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Name: ${data['nameUser']}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Motorcycle: ${data['brandMotor']} ${data['modelMotor']}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Status: ${data['orderStatus']}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )
-            ],
-          );
+          if (data['orderStatus'] == 'problem') {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Name: ${data['nameUser']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red),
+                    ),
+                    Text(
+                      'Motorcycle: ${data['brandMotor']} ${data['modelMotor']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Status: ${data['orderStatus']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red),
+                    ),
+                  ],
+                )
+              ],
+            );
+          } else if (data['orderStatus'] == 'success') {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Name: ${data['nameUser']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.greenAccent),
+                    ),
+                    Text(
+                      'Motorcycle: ${data['brandMotor']} ${data['modelMotor']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.greenAccent),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Status: ${data['orderStatus']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.greenAccent),
+                    ),
+                  ],
+                )
+              ],
+            );
+          } else {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Name: ${data['nameUser']}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Motorcycle: ${data['brandMotor']} ${data['modelMotor']}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Status: ${data['orderStatus']}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
+              ],
+            );
+          }
         }
         return const Center(
           child: CircularProgressIndicator(),
